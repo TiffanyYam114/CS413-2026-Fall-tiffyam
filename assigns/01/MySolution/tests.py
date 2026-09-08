@@ -33,9 +33,16 @@ class EightQueensTests(unittest.TestCase):
     def test_print_row(self) -> None:
         output = io.StringIO()
         with patch.object(queens.sys, "stdout", output):
+            queens.print_row(0)
             queens.print_row(2)
+            queens.print_row(7)
 
-        self.assertEqual(output.getvalue(), ". . Q . . . . . \n")
+        self.assertEqual(
+            output.getvalue(),
+            "Q . . . . . . . \n"
+            ". . Q . . . . . \n"
+            ". . . . . . . Q \n",
+        )
 
     def test_print_board(self) -> None:
         board = (0, 1, 2, 3, 4, 5, 6, 7)
@@ -62,6 +69,9 @@ class EightQueensTests(unittest.TestCase):
         moved_board = queens.board_set(board, 3, 5)
         self.assertEqual(moved_board, (0, 0, 0, 5, 0, 0, 0, 0))
         self.assertEqual(board, (0, 0, 0, 0, 0, 0, 0, 0))
+        self.assertEqual(queens.board_set(board, 0, 7), (7, 0, 0, 0, 0, 0, 0, 0))
+        self.assertEqual(queens.board_set(board, 7, 4), (0, 0, 0, 0, 0, 0, 0, 4))
+        self.assertEqual(queens.board_set(board, 4, -3), (0, 0, 0, 0, -3, 0, 0, 0))
         self.assertIs(queens.board_set(board, -1, 5), board)
         self.assertIs(queens.board_set(board, 8, 5), board)
 
@@ -69,6 +79,8 @@ class EightQueensTests(unittest.TestCase):
         self.assertTrue(queens.safety_test1(0, 0, 1, 2))
         self.assertFalse(queens.safety_test1(0, 0, 1, 0))
         self.assertFalse(queens.safety_test1(0, 0, 1, 1))
+        self.assertFalse(queens.safety_test1(0, 0, 0, 0))
+        self.assertFalse(queens.safety_test1(0, 1, 4, 5))
 
     def test_safety_test2(self) -> None:
         board = (0, 4, 7, 5, 2, 6, 1, 3)
@@ -77,6 +89,8 @@ class EightQueensTests(unittest.TestCase):
         self.assertFalse(queens.safety_test2(1, 0, board, 0))
         self.assertFalse(queens.safety_test2(1, 1, board, 0))
         self.assertTrue(queens.safety_test2(0, 0, board, -1))
+        self.assertTrue(queens.safety_test2(4, 2, board, 3))
+        self.assertFalse(queens.safety_test2(4, 4, board, 3))
 
     def test_search_finds_all_eight_queen_solutions(self) -> None:
         output = io.StringIO()
@@ -86,6 +100,18 @@ class EightQueensTests(unittest.TestCase):
 
         self.assertEqual(solution_count, 92)
         self.assertEqual(output.getvalue().count("Solution #"), 92)
+
+    def test_search_handles_completed_or_offset_states(self) -> None:
+        empty_board = (0, 0, 0, 0, 0, 0, 0, 0)
+        self.assertEqual(queens.search(empty_board, 0, queens.N, 0), 0)
+
+        output = io.StringIO()
+        with patch.object(queens.sys, "stdout", output):
+            solution_count = queens.search(empty_board, 0, 0, 5)
+
+        self.assertEqual(solution_count, 97)
+        self.assertTrue(output.getvalue().startswith("Solution #6:"))
+        self.assertIn("Solution #97:", output.getvalue())
 
 
 if __name__ == "__main__":
