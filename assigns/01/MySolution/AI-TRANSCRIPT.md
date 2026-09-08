@@ -25,3 +25,9 @@ to several functions, create a type `int8` for a tuple of 8 integers. Then pass 
 ## AI Response: 
 
 Codex implemented `int8` and passed it as an argument in the necessary functions.
+
+## Manual Changes:
+
+The ATS code for the function `board_get` contains else if statements, but the 
+Codex translation is a bunch of if statements. I manually changed the function 
+to have else if statements. 
