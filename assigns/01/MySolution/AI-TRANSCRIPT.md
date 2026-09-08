@@ -52,3 +52,7 @@ All tests pass.
 For some reason, Codex added another test for `search` that starts with `nsol` at 5, and 
 it tests if `nsol` at the end of the function is 97. I thought that was unnecessary 
 because 92 + 5 = 97, and you don't need to make another test case to confirm that.
+
+### Add my own test cases
+
+Added my own test cases to the bottom of tests.py. All tests pass.
