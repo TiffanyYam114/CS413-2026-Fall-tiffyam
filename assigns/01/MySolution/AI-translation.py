@@ -4,6 +4,7 @@ import sys
 
 
 N = 8
+int8 = tuple[int, int, int, int, int, int, int, int]
 
 
 def print_dots(i: int) -> None:
@@ -20,7 +21,7 @@ def print_row(i: int) -> None:
     sys.stdout.write("\n")
 
 
-def print_board(bd: tuple[int, int, int, int, int, int, int, int]) -> None:
+def print_board(bd: int8) -> None:
     for i in range(N):
         print_row(bd[i])
     # The ATS print_newline call also flushes standard output.
@@ -28,7 +29,7 @@ def print_board(bd: tuple[int, int, int, int, int, int, int, int]) -> None:
     sys.stdout.flush()
 
 
-def board_get(bd: tuple[int, int, int, int, int, int, int, int], i: int) -> int:
+def board_get(bd: int8, i: int) -> int:
     """Return a queen's column, or -1 for an invalid row."""
     if i == 0:
         return bd[0]
@@ -50,8 +51,8 @@ def board_get(bd: tuple[int, int, int, int, int, int, int, int], i: int) -> int:
 
 
 def board_set(
-    bd: tuple[int, int, int, int, int, int, int, int], i: int, j: int
-) -> tuple[int, int, int, int, int, int, int, int]:
+    bd: int8, i: int, j: int
+) -> int8:
     """Return bd with the queen in row i moved to column j."""
     if 0 <= i < N:
         board = list(bd)
@@ -65,7 +66,7 @@ def safety_test1(i0: int, j0: int, i1: int, j1: int) -> bool:
 
 
 def safety_test2(
-    i0: int, j0: int, bd: tuple[int, int, int, int, int, int, int, int], i: int
+    i0: int, j0: int, bd: int8, i: int
 ) -> bool:
     if i >= 0:
         if safety_test1(i0, j0, i, board_get(bd, i)):
@@ -75,7 +76,7 @@ def safety_test2(
 
 
 def search(
-    bd: tuple[int, int, int, int, int, int, int, int], i: int, j: int, nsol: int
+    bd: int8, i: int, j: int, nsol: int
 ) -> int:
     """Perform the original tail-recursive DFS and return its solution count."""
     # ATS optimizes this tail-recursive function.  Python does not, so this
