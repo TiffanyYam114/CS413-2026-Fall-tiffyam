@@ -114,5 +114,20 @@ class EightQueensTests(unittest.TestCase):
         self.assertIn("Solution #97:", output.getvalue())
 
 
+    """ My own test cases """
+
+    def test_my_test_cases(self) -> None:
+        self.assertTrue(queens.safety_test1(1, 1, 2, 3))
+        self.assertTrue(queens.safety_test1(5, 3, 7, 6))
+        self.assertFalse(queens.safety_test1(0, 0, 7, 7))
+        self.assertFalse(queens.safety_test1(1, 3, 5, 3))
+
+        board = (0, 0, 1, 1, 6, 6, 7, 7)
+        self.assertTrue(queens.safety_test2(6, 2, board, 4))
+        self.assertTrue(queens.safety_test2(7, 4, board, 4))
+        self.assertFalse(queens.safety_test2(4, 0, board, 4))
+        self.assertFalse(queens.safety_test2(3, 3, board, 7))
+
+
 if __name__ == "__main__":
     unittest.main()
