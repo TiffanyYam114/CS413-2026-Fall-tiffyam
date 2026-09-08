@@ -33,21 +33,22 @@ def board_get(bd: int8, i: int) -> int:
     """Return a queen's column, or -1 for an invalid row."""
     if i == 0:
         return bd[0]
-    if i == 1:
+    else if i == 1:
         return bd[1]
-    if i == 2:
+    else if i == 2:
         return bd[2]
-    if i == 3:
+    else if i == 3:
         return bd[3]
-    if i == 4:
+    else if i == 4:
         return bd[4]
-    if i == 5:
+    else if i == 5:
         return bd[5]
-    if i == 6:
+    else if i == 6:
         return bd[6]
-    if i == 7:
+    else if i == 7:
         return bd[7]
-    return -1
+    else:
+        return -1
 
 
 def board_set(
