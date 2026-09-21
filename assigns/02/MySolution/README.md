@@ -25,3 +25,11 @@ After completing these, I asked Codex to check my answers. Codex confirmed that 
 - `T0Mpsnd` - Evaluate `t2`, then return `t1.arg2`.
 
 After completing these, I asked Codex to check my answers. Codex confirmed that my answers were correct.
+
+## 3. Test your implementation
+
+I asked Codex to create the test cases listed as well as the three specific assertions. I checked the test 
+cases and found the first and second assertions, but the third one was missing. I prompted Codex to add the 
+third assertion. 
+
+In the MySolution directory, run tests with `python -m unittest MySolution.TEST.test02_lambda0`.
