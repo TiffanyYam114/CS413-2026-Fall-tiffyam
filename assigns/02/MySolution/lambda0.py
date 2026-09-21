@@ -292,6 +292,22 @@ def t0erm_cbv_evaluate0(term: t0erm) -> t0erm:
                 raise TypeError(f"t0erm_cbv_evaluate0: {term.arg1} expects integers ({t1}, {t2})")
         else:
             raise TypeError(f"t0erm_cbv_evaluate0({term})")
+    elif isinstance(term, T0Mpair):
+        t1 = t0erm_cbv_evaluate0(term.arg1)
+        t2 = t0erm_cbv_evaluate0(term.arg2)
+        return T0Mpair(t1, t2)
+    elif isinstance(term, T0Mpfst):
+        t1 = t0erm_cbv_evaluate0(term.arg1)
+        if isinstance(t1, T0Mpair):
+            return t1.arg1
+        else:
+            raise TypeError(f"The first component of {t1} is not a pair value")
+    elif isinstance(term, T0Mpsnd):
+        t1 = t0erm_cbv_evaluate0(term.arg1)
+        if isinstance(t1, T0Mpair):
+            return t1.arg2
+        else:
+            raise TypeError(f"The second component of {t1} is not a pair value")
     else:
         raise TypeError(f"t0erm_cbv_evaluate0({term})")        
 #
