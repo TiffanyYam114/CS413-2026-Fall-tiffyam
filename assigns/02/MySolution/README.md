@@ -14,3 +14,13 @@
 - `T0Mpair` - Keep the pair constructor but substitute both `arg1` and `arg2`.
 - `T0Mpfst` - Keep the projection constructor but substitute `arg1`.
 - `T0Mpsnd` - Keep the projection constructor but substitute `arg1`.
+
+
+After completing these, I asked Codex to check my answers. Codex confirmed that my answers were correct.
+
+## 2. Extend call-by-value evaluation
+
+`t0erm_cbv_evaluate0`
+- `T0Mpair` - Evaluate `t1` and `t2`, then create a new `T0Mpair(t1, t2)`.
+- `T0Mpfst` - Evaluate `t1`, then return `t1.arg1`.
+- `T0Mpsnd` - Evaluate `t2`, then return `t1.arg2`.
