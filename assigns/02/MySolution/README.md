@@ -9,3 +9,8 @@
 - `T0Mpair` - Collect the free variables from both `arg1` and `arg2`.
 - `T0Mpfst` - Collect the free variables from only `arg1`.
 - `T0Mpsnd` - Collect the free variables from only `arg1`.
+
+`t0erm_subst0`
+- `T0Mpair` - Keep the pair constructor but substitute both `arg1` and `arg2`.
+- `T0Mpfst` - Keep the projection constructor but substitute `arg1`.
+- `T0Mpsnd` - Keep the projection constructor but substitute `arg1`.
