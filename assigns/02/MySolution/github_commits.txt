@@ -1,0 +1,23 @@
+﻿c1c5649ba368528d06e3a7cab13662741fcd984f | 2026-09-22T22:13:36-04:00 | TiffanyYam114 | Added log of commit history
+8d6129410c6c5a5ac8784bb058bf8a4845887ef4 | 2026-09-22T22:11:18-04:00 | TiffanyYam114 | Codex changes
+503f525ca2c747a78ce13a8bbba4821f409a2f41 | 2026-09-22T22:10:32-04:00 | TiffanyYam114 | More changes
+e91cf5e900afe15729f9791e60ff22b793c9eaf9 | 2026-09-22T21:39:43-04:00 | TiffanyYam114 | Explained more translations
+160dbe4f30fe7acec99fcd9896eaca4a06704330 | 2026-09-22T21:26:17-04:00 | TiffanyYam114 | Codex changes
+573efeca2d2932c1394b1c97805f87b2bbb609f0 | 2026-09-22T21:25:59-04:00 | TiffanyYam114 | Explained translation of int8
+a8b5625e0947ebe8a20cf6c10bc2ecbbba692bf4 | 2026-09-22T21:11:07-04:00 | TiffanyYam114 | Added Codex-generated queens_lambda0.py and tests
+858ff2cef14d5d26837da3795cf1108ed97d217e | 2026-09-22T20:50:13-04:00 | TiffanyYam114 | Minor changes
+7ae6449be694624c49984556498b66c2b93cc942 | 2026-09-22T20:42:48-04:00 | TiffanyYam114 | Added Codex-generated queens_lambda0.py
+f8327764f0946eaae9225475d7a6afb614e9b35e | 2026-09-22T11:22:34-04:00 | TiffanyYam114 | Merge branch 'main' of https://github.com/TiffanyYam114/CS413-2026-Fall-tiffyam
+1b1f4b589e2230fc537563f47ef10cd311e56699 | 2026-09-22T11:22:24-04:00 | TiffanyYam114 | Added original ATS eight-queens source code
+76126315282d5183c3d848195d1508dabb2fe1cb | 2026-09-21T18:07:46-04:00 | TiffanyYam114 | More changes
+2f462f19ba90efa057cfef30656bc885fec59747 | 2026-09-21T18:04:41-04:00 | TiffanyYam114 | Added Codex-generated test cases
+74dd6e2fdd004e19ff56a55d1a49df4a1147783b | 2026-09-21T18:03:40-04:00 | TiffanyYam114 | Added test01
+8c6ba356beb98492729042eb795d05d41edd3eb4 | 2026-09-21T17:17:04-04:00 | TiffanyYam114 | More changes
+2069b068d6bdc55f1065faa9afc02c65212c8540 | 2026-09-21T17:15:00-04:00 | TiffanyYam114 | Added new cases to t0erm_cbv_evaluate0
+999c2278b3e88edeedc1a7322581ae15c39fe7e2 | 2026-09-21T17:13:40-04:00 | TiffanyYam114 | Explained more changes
+34be452561099292b5537049565ed6d450877bd4 | 2026-09-21T16:53:50-04:00 | TiffanyYam114 | Added new constructors to t0erm_subst0
+e18b78adcaaeb34f0bdf2bfbba5f10acab5d64a8 | 2026-09-21T16:53:25-04:00 | TiffanyYam114 | Explained more changes
+7eb13e0d71191ebd4c38e2e8d71a08f21d1de245 | 2026-09-21T16:44:49-04:00 | TiffanyYam114 | Added new constructors to t0erm_fvset
+5c5151b764ce0d2abfa2e8a27cd0287a9ff0d579 | 2026-09-21T16:44:25-04:00 | TiffanyYam114 | Explained more changes
+5757758303f073d0b4bb59c1f679de4f7ee4a9e3 | 2026-09-21T16:38:23-04:00 | TiffanyYam114 | Added new constructors to t0erm_size
+3bdf6b1055e2d63d8b8f1fd787a01eae18fed032 | 2026-09-21T16:37:39-04:00 | TiffanyYam114 | Created README.md explaining some changes
