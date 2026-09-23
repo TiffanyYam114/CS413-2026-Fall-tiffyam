@@ -36,9 +36,8 @@ In the MySolution directory, run tests with `python -m unittest TEST.test02_lamb
 
 ## 4. Translate an ATS2 eight-queens solution into a lambda-term
 
-
-I prompted Codex to translate the source code in `original_ATS_eight_queens.md` to the lambda0 type. 
-
+I prompted Codex to translate the source code in `original_ATS_eight_queens.md` to the lambda0 type and to 
+create test03_queens.py. The tests return 92 solutions, the same as the original program.
 
 Some of the notable functions and data structures translated to lambda0:
 - In ATS, the board is represented by `int8 = (int, int, int, int, int, int, int, int)`. 
@@ -52,3 +51,11 @@ terminates the pair.
 `get` receives a board and a row index. It uses snd projection to get the second item in the tuple (the 
 remaining rows), then once it reaches the requested row it returns the index of the queen on that row. 
 `set` also uses snd projection to get to the requested row, then it changes the index of the queen on that row.
+- `search` in ATS is a `T0Mfix` recursive function in lambda0. It returns `(count, solutions)` where `count` 
+is the number of solutions and `solutions` is the complete list of 92 solutions.
+
+In the MySolution directory, run tests with 
+```
+python queens_lambda0.py
+python -m unittest TEST.test03_queens
+```
