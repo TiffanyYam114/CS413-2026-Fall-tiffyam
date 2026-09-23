@@ -5,7 +5,8 @@ Representation
 An ATS ``int8`` tuple is represented here by a (fixed length) pair-list:
 ``T0Mpair(column, rest)``, with ``T0Mint(-1)`` as the terminator.  Thus the
 first pair is row 0 and each later pair is the next row.  A search state is
-``(board, (row, (column, solution_count)))``.  These are all object-language
+``(board, (row, (column, (solution_count, solutions))))``. ``solutions`` is
+an object-language pair-list of completed boards. These are all object-language
 values, not Python data structures used by the search.
 
 ``make_queens_term`` constructs one closed t0erm.  Its object-language
@@ -42,16 +43,25 @@ def if_(condition, yes, no): return T0Mif0(condition, yes, no)
 def call2(fun, a, b): return app(app(fun, a), b)
 
 
-def state(board, row, column, count):
-    return pair(board, pair(row, pair(column, count)))
+def state(board, row, column, count, solutions):
+    return pair(board, pair(row, pair(column, pair(count, solutions))))
 
 
-def board0():
-    """The initial eight rows; values are overwritten before being read."""
+def board0(size):
+    """An initial fixed-size board; values are overwritten before being read."""
     result = T0Mint(-1)
-    for _ in range(8):
+    for _ in range(size):
         result = pair(T0Mint(0), result)
     return result
+
+
+def safety_test1_term(i0, j0, i1, j1):
+    """The ATS safety_test1 expressed directly as a boolean LAMBDA0 term."""
+    row_delta = op("-", i0, i1)
+    col_delta = op("-", j0, j1)
+    abs_row = if_(op("<", row_delta, T0Mint(0)), neg(row_delta), row_delta)
+    abs_col = if_(op("<", col_delta, T0Mint(0)), neg(col_delta), col_delta)
+    return if_(op("!=", j0, j1), op("!=", abs_row, abs_col), T0Mbtf(False))
 
 
 class _Closure:
@@ -148,7 +158,10 @@ def t0erm_cbv_evaluate0(term: T0M000) -> T0M000:
     return result
 
 
-def make_queens_term() -> T0M000:
+def make_queens_term(size: int = 8) -> T0M000:
+    """Build a closed search term for a positive board size (default: eight)."""
+    if size < 1:
+        raise ValueError("the translation supports positive board sizes")
     # get : (board, index) -> column
     bi = v("bi")
     get = T0Mfix("get", "bi",
@@ -172,12 +185,7 @@ def make_queens_term() -> T0M000:
     row, col = fst(s), fst(snd(s))
     board, last = fst(snd(snd(s))), snd(snd(snd(s)))
     old_col = app(v("get"), pair(board, last))
-    row_delta = op("-", row, last)
-    col_delta = op("-", col, old_col)
-    abs_row = if_(op("<", row_delta, T0Mint(0)), neg(row_delta), row_delta)
-    abs_col = if_(op("<", col_delta, T0Mint(0)), neg(col_delta), col_delta)
-    conflict_free = if_(op("!=", col, old_col),
-                        op("!=", abs_row, abs_col), T0Mbtf(False))
+    conflict_free = safety_test1_term(row, col, last, old_col)
     safe = T0Mfix("safe", "s",
         if_(op(">=", last, T0Mint(0)),
             if_(conflict_free,
@@ -187,24 +195,25 @@ def make_queens_term() -> T0M000:
             T0Mbtf(True))
     )
 
-    # search : (board, (row, (candidate-column, count))) -> count
+    # search -> (count, solutions): store ATS's printed boards as data.
     q = v("q")
     bd, i = fst(q), fst(snd(q))
-    j, nsol = fst(snd(snd(q))), snd(snd(snd(q)))
+    j = fst(snd(snd(q)))
+    nsol, solutions = fst(snd(snd(snd(q)))), snd(snd(snd(snd(q))))
     safe_call = app(v("safe"), pair(i, pair(j, pair(bd, op("-", i, T0Mint(1))))))
     bd1 = app(v("set"), pair(bd, pair(i, j)))
-    next_column = app(v("search"), state(bd, i, op("+", j, T0Mint(1)), nsol))
+    next_column = app(v("search"), state(bd, i, op("+", j, T0Mint(1)), nsol, solutions))
     finished = app(v("search"), state(bd, i, op("+", j, T0Mint(1)),
-                                        op("+", nsol, T0Mint(1))))
-    next_row = app(v("search"), state(bd1, op("+", i, T0Mint(1)), T0Mint(0), nsol))
+                                        op("+", nsol, T0Mint(1)), pair(bd1, solutions)))
+    next_row = app(v("search"), state(bd1, op("+", i, T0Mint(1)), T0Mint(0), nsol, solutions))
     backtrack = app(v("search"), state(bd, op("-", i, T0Mint(1)),
-        op("+", app(v("get"), pair(bd, op("-", i, T0Mint(1)))), T0Mint(1)), nsol))
+        op("+", app(v("get"), pair(bd, op("-", i, T0Mint(1)))), T0Mint(1)), nsol, solutions))
     search = T0Mfix("search", "q",
-        if_(op("<", j, T0Mint(8)),
+        if_(op("<", j, T0Mint(size)),
             if_(safe_call,
-                if_(op("==", op("+", i, T0Mint(1)), T0Mint(8)), finished, next_row),
+                if_(op("==", op("+", i, T0Mint(1)), T0Mint(size)), finished, next_row),
                 next_column),
-            if_(op(">", i, T0Mint(0)), backtrack, nsol))
+            if_(op(">", i, T0Mint(0)), backtrack, pair(nsol, solutions)))
     )
 
     # These lexical bindings substitute closed helper values before search runs.
@@ -212,7 +221,8 @@ def make_queens_term() -> T0M000:
            let("set", set_,
            let("safe", safe,
            let("search", search,
-               app(v("search"), state(board0(), T0Mint(0), T0Mint(0), T0Mint(0)))))))
+               app(v("search"), state(board0(size), T0Mint(0), T0Mint(0),
+                                      T0Mint(0), T0Mint(-1)))))))
 
 
 def main():
@@ -223,9 +233,9 @@ def main():
     term = make_queens_term()
     assert not t0erm_fvset(term), "the translated program must be closed"
     answer = t0erm_cbv_evaluate0(term)
-    assert isinstance(answer, T0Mint)
-    assert answer.arg1 == 92
-    print(f"eight-queens solutions: {answer.arg1}")
+    assert isinstance(answer, T0Mpair) and isinstance(answer.arg1, T0Mint)
+    assert answer.arg1.arg1 == 92
+    print(f"eight-queens solutions: {answer.arg1.arg1}")
 
 
 if __name__ == "__main__":
