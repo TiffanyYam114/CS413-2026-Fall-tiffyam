@@ -41,7 +41,14 @@ I prompted Codex to translate the source code in `original_ATS_eight_queens.md` 
 
 
 Some of the notable functions and data structures translated to lambda0:
-- In ATS, `int8 = (int, int, int, int, int, int, int, int)`. The first int represents the column position 
-of the queen on row 0, the second int represents the column position of the queen on row 1, etc. In lambda0, 
-int8 is represented by a fixed length of nested pairs. So if we had `T0Mpair(5, T0Mpair(4, ...T0Mpair(3, T0Mint(-1))))`, that would mean the queen on row 0 is in column 5, the queen on row 1 is in column 4, the queen on row 7 is in column 3. The last `T0Mint(-1)` terminates the pair. 
-- 
+- In ATS, the board is represented by `int8 = (int, int, int, int, int, int, int, int)`. 
+The first int represents the column position of the queen on row 0, the second int represents 
+the column position of the queen on row 1, etc. 
+In lambda0, the board is represented by a fixed length of nested pairs. So if we had 
+`T0Mpair(5, T0Mpair(4, ...T0Mpair(3, T0Mint(-1))))`, that would mean the queen on row 0 is in 
+column 5, the queen on row 1 is in column 4, the queen on row 7 is in column 3. The last `T0Mint(-1)` 
+terminates the pair. 
+- `board_get` and `board_set` are translated to `get` and `set` recursive T0Mfix functions in lambda0. 
+`get` receives a board and a row index. It uses snd projection to get the second item in the tuple (the 
+remaining rows), then once it reaches the requested row it returns the index of the queen on that row. 
+`set` also uses snd projection to get to the requested row, then it changes the index of the queen on that row.
