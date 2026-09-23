@@ -1,7 +1,7 @@
 """Tests for LAMBDA0 pairs and projections.
 
-Run from the assignment directory with:
-    python -m unittest MySolution.TEST.test02_lambda0
+Run from the MySolution directory with:
+    python -m unittest TEST.test02_lambda0
 """
 
 import sys
