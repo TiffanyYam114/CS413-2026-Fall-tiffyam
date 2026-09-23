@@ -32,4 +32,16 @@ I asked Codex to create the test cases listed as well as the three specific asse
 cases and found the first and second assertions, but the third one was missing. I prompted Codex to add the 
 third assertion. 
 
-In the MySolution directory, run tests with `python -m unittest MySolution.TEST.test02_lambda0`.
+In the MySolution directory, run tests with `python -m unittest TEST.test02_lambda0`.
+
+## 4. Translate an ATS2 eight-queens solution into a lambda-term
+
+
+I prompted Codex to translate the source code in `original_ATS_eight_queens.md` to the lambda0 type. 
+
+
+Some of the notable functions and data structures translated to lambda0:
+- In ATS, `int8 = (int, int, int, int, int, int, int, int)`. The first int represents the column position 
+of the queen on row 0, the second int represents the column position of the queen on row 1, etc. In lambda0, 
+int8 is represented by a fixed length of nested pairs. So if we had `T0Mpair(5, T0Mpair(4, ...T0Mpair(3, T0Mint(-1))))`, that would mean the queen on row 0 is in column 5, the queen on row 1 is in column 4, the queen on row 7 is in column 3. The last `T0Mint(-1)` terminates the pair. 
+- 
