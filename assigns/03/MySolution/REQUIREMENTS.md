@@ -77,3 +77,10 @@ FR8 is a should have because the brief says it would be "useful." It could be ad
 FR10 is a should have because I assumed that the stakeholder would want to have a direct link to the error line. If it turns out the stakeholder actually did not want this, it would be better because it's not as high priority as the other requirements.
 All other requirements are a must have as stated in the brief.
 
+### Quality Requirements
+
+| # | Priority | Requirement Description |
+| --- | --- | --- |
+| QR1 | Must have | The main program-editing, compiling, running, saving, and testing operations shall be usable with a keyboard. |
+| QR2 | Must have | The first version shall operate in current versions of commonly used desktop browsers, including Chrome, Firefox, Safari, and Edge. |
+| QR3 | Must have | Important information, including errors and test outcomes, shall not be communicated through color alone. |
