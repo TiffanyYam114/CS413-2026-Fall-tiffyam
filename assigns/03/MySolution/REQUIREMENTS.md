@@ -71,7 +71,7 @@
 | FR16 | Must have | The system shall allow a test to specify both an expected successful result, such as an integer or Boolean value; and an expected compilation failure. |
 | FR17 | Must have | The system shall allow a user to run multiple saved tests as a collection. |
 | FR18 | Must have | A failure of one test shall not prevent the remaining tests in the collection from being evaluated. |
-| FR19 | Must have | After running a test collection, the system shall provide a summary showing which tests passed and failed and sufficient information about failed tests to investigate the cause. |
+| FR19 | Must have | After running a test collection, the system shall provide a summary showing which tests passed and failed and the location and description about failed tests. |
 
 FR8 is a should have because the brief says it would be "useful." It could be added in later versions when the compiler is finished.
 FR10 is a should have because I assumed that the stakeholder would want to have a direct link to the error line. If it turns out the stakeholder actually did not want this, it would be better because it's not as high priority as the other requirements.
@@ -87,6 +87,7 @@ All other requirements are a must have as stated in the brief.
 
 
 ## 4. Acceptance Criteria
+
 | Requirement | Starting Conditions | Action or Input | Observable Expected Result |
 | --- | --- | --- | --- |
 | FR3 | An example program is available in the system. | Open the example, create a copy, and modify the copied program. Then reopen the original example. | The copied program contains the user's modifications, while the original example remains unchanged. |
@@ -99,3 +100,35 @@ All other requirements are a must have as stated in the brief.
 | FR11 | A valid LAMBDA program is open and has been saved. The compiler is unavailable or cannot be reached. | The user attempts to compile or run the program. | The system reports that the compiler/environment could not be reached and does not present the problem as a compilation error in the user's program. The user's saved program remains available. |
 | FR13 | A LAMBDA program is open. The program takes long enough to execute that it is possible to modify the source while the execution is still in progress. | 1. Start execution of the program. 2. Modify the program while the first execution is still running. 3. Wait for the first execution to finish. | The displayed result is clearly associated with the original version of the program that was submitted for execution, rather than being incorrectly presented as the result of the modified program. |
 
+## 5. Traceability and Review
+
+| Functional Requirement # | Source
+| --- | --- |
+| FR1 | Brief - "I imagine opening the page, typing or pasting a short program" |
+| FR2 | Brief - "Having a few examples to start from would help." |
+| FR3 | Brief - "Students should be able to modify an example without losing access to the original." Assumption - Users can copy a program and modify the copied program. |
+| FR4 | Brief - "Students may already have programs saved in files, and they should not have to retype them." |
+| FR5 | Brief - "They should also be able to keep a program they have written and return to it later." |
+| FR6 | Brief - "Sometimes I only want to check whether a program compiles." |
+| FR7 | Brief - "At other times, I want to run it and see the answer." |
+| FR8 | Brief - "For teaching, it would also be useful to inspect information the compiler produces, such as an abstract syntax tree or generated code, when that information is available." |
+| FR9 | Brief - "If there is a mistake in the program, I want the student to see a useful explanation." |
+| FR10 | Brief - "When the compiler reports where the problem occurred, the environment should help the student find that place in the source." |
+| FR11 | Brief - "A compilation error and a failure while running the program should not look like the same thing." |
+| FR12 | Brief - "Some examples may run for a long time, and a recursive program might never finish. There should be a way to stop it and move on." |
+| FR13 | Brief - "If I change a program while an earlier run is still working, I need to know which version produced the result I am seeing." |
+| FR14 | Brief - "The page should remain usable while work is in progress." |
+| FR15 | Brief - "Each test would contain a program and some record of what should happen." |
+| FR16 | Brief - "Some tests would expect an answer, such as an integer or a Boolean value. Others would intentionally contain an error and expect the compiler to reject the program." |
+| FR17 | Brief - "Running one program at a time is useful, but I would also like students to keep a collection of named tests." |
+| FR18 | Brief - "One troublesome test should not make the rest of the collection useless." |
+| FR19 | Brief - "I would like a quick summary of which tests worked as expected, with enough detail to investigate the ones that did not." |
+| QR1 | Brief - "Students should be able to perform the main tasks with a keyboard" |
+| QR2 | Brief - "It should work in a browser students normally use." Assumption - Stakeholders want Chrome, Firefox, Safari, and Edge to be usable with the environment. |
+| QR3 | Brief - "messages should make sense without depending only on colors" |
+
+### Issues
+
+1. The brief says that messages should not depend only on color, but this it does not say how much color can be used. This would have to be further reviewed with the stakeholders to figure out what they want.
+2. The brief says that students should be able to modify an example without losing access to the original, but it does not specify how this should work. Creating a copy is the most logical option, so FR3 specifies that users can copy a program and modify the copy.
+3. The brief says that the environment should help students find the location of a compiler error, but “help” is ambiguous and could mean many different things, like highlighting the line, displaying a message, scrolling to the location, or providing a link. I assumed that it would provide a link to the line of error, since that's what many IDEs do. FR10 requires that compiler errors have a link.
