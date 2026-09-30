@@ -84,3 +84,18 @@ All other requirements are a must have as stated in the brief.
 | QR1 | Must have | The main program-editing, compiling, running, saving, and testing operations shall be usable with a keyboard. |
 | QR2 | Must have | The first version shall operate in current versions of commonly used desktop browsers, including Chrome, Firefox, Safari, and Edge. |
 | QR3 | Must have | Important information, including errors and test outcomes, shall not be communicated through color alone. |
+
+
+## 4. Acceptance Criteria
+| Requirement | Starting Conditions | Action or Input | Observable Expected Result |
+| --- | --- | --- | --- |
+| FR3 | An example program is available in the system. | Open the example, create a copy, and modify the copied program. Then reopen the original example. | The copied program contains the user's modifications, while the original example remains unchanged. |
+| FR6 | A valid LAMBDA program is open in the editor. | Select Compile. | The system sends the program for compilation and displays the compilation result without executing the program. |
+| FR7 | A valid LAMBDA program whose result is known is open in the editor. | Select Run. | The system executes the program and displays the resulting value/output. |
+| FR10 | A LAMBDA program containing a compilation error is open, and the compiler reports a source location for the error. | Compile the program and select the reported error/location. | The system identifies the compiler error and allows the user to navigate to the corresponding location in the source editor. |
+| FR12 | A LAMBDA program that takes a long time to execute or does not terminate is open. | Start the program and then select the cancellation/stop operation. | Execution stops, and the environment returns to a usable state without requiring the user to close or refresh the browser. |
+| FR18 | A test collection contains several tests, including at least one test that is expected to fail. | Run the entire test collection. | The failing test is reported as failed, but the remaining tests are also executed and receive their own results. |
+| Failure Scenarios | --- | --- | --- |
+| FR11 | A valid LAMBDA program is open and has been saved. The compiler is unavailable or cannot be reached. | The user attempts to compile or run the program. | The system reports that the compiler/environment could not be reached and does not present the problem as a compilation error in the user's program. The user's saved program remains available. |
+| FR13 | A LAMBDA program is open. The program takes long enough to execute that it is possible to modify the source while the execution is still in progress. | 1. Start execution of the program. 2. Modify the program while the first execution is still running. 3. Wait for the first execution to finish. | The displayed result is clearly associated with the original version of the program that was submitted for execution, rather than being incorrectly presented as the result of the modified program. |
+
