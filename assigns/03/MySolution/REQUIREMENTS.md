@@ -1,0 +1,134 @@
+# Requirements Specification: A Web-Based Environment for Testing LAMBDA
+
+## 1. Stakeholders and Scope
+
+### Stakeholders
+
+| User | Goal |
+| --- | --- |
+| Professor | Write, compile, and run LAMBDA programs during lecture; create examples that students can edit without losing the original; choose to only compile or run a program; inspect compiler information, such as abstract syntax trees and generated code; view students' passed and failed test results; be able to stop a running program; view current and previous versions of programs |
+| Students | Write, compile, and run LAMBDA programs; open a program from files; save and reopen programs; view the exact line of and understand compiler errors; understand the difference between compiler errors and runtime errors; run tests |
+| Compiler Developers | Develop a compiler that works on the web environment |
+
+### Scope
+
+#### In the scope/things that should be in the first version
+- Running locally on the user's computer
+- Typing or pasting code directly into the text editor
+- Saving a program into files
+- Opening a program from files
+- Creating multiple versions of a program and editing a version without losing the original
+- Separate compile and run buttons
+- Inspect compiler information
+- Compiler errors show the exact line and a description of the error
+- Compiler errors and runtime errors show different error messages
+- Ability to stop a running program
+- Output from running a program shows the version that produced the output
+- Creating tests
+- Test results show passing and failed tests
+- Failed tests do not affect other tests
+- Reloading does not wipe progress
+- Be able to work with the current version of the compiler
+- Simple to use with a keyboard
+
+#### Not in the scope
+- A public website
+- User accounts and authentication
+- Multiple users editing the same program at the same time
+- Sharing examples with students - can be implemented in a later version
+
+## 2. Questions and Assumptions
+
+| # | Stakeholder Question | Why the answer matters | Stakeholder Answer |
+| --- | --- | --- | --- |
+| 1 | How should students preserve the original example while creating their edited version? | I can think of several ways this would work: 1. Students can edit an example but still revert the program back to its original version. But this would make the edited version unavailable, and students probably still want to keep the edited version. 2. Be able to add another text editor on the page. One of them has the original example, the other has the student's edited version. Now students have access to both versions at the same time. 3. Download the example, create a copy, and edit the copy. Then students can have both the original and edited version but only one open at a time. | No stakeholder answer. I would choose option 3, as it is the most logical option and is a feature that most existing text editors have. |
+| 2 | How should the environment help the student find the place of the compiler error? | "When the compiler reports where the problem occurred, the environment should help the student find that place in the source." When the compiler shows the line of the error, the student can just go to that line in the file. Would the LAMBDA editor also provide a direct link to the error line? | No stakeholder answer. Since the direct link to the error line is a feature in many existing text editors, I assume that we should also add a direct link. |
+| 3 | How should compiler errors and runtime errors be formatted? | The brief states compiler errors and runtime errors should not look like the same thing but does not specify what they should look like. Since we want the users to understand the errors they get, we should specify what they look like. | No stakeholder answer. Question remains unresolved. |
+| 4 | What browser(s) should the environment be able to run on? | The brief states it should work in a browser students normally use but does not specify which browsers. We want to determine which browsers to include so that later on, students don't have a problem with being unable to access the environment. | No stakeholder answer. I assume we want to have the environment accessible to the most popular browsers, like Chrome, Safari, Edge, and Firefox. |
+| 5 | How much color do we want to add? | The brief states, "messages should make sense without depending only on colors." Does this mean we don't want colors at all? I believe colors are a useful tool for determining whether a piece of code is a variable, function, comment, etc, so I would like to know how much colors to add. | No stakeholder answer. Question remains unresolved. |
+
+## 3. Requirements Specification
+
+### Functional Requirements
+
+| # | Priority | Requirement Description |
+| --- | --- | --- |
+| FR1 | Must have | The system shall provide an editor in which a user can enter, modify, and view a LAMBDA source program. |
+| FR2 | Must have | The system shall provide a collection of example LAMBDA programs that a user can open and use as starting points. |
+| FR3 | Must have | The system shall allow a user to create an editable copy of an program without modifying the original program. |
+| FR4 | Must have | The system shall allow a user to import a LAMBDA program from a supported file. |
+| FR5 | Must have | The system shall allow a user to save a program and return to it during a later session. |
+| FR6 | Must have | The system shall allow a user to submit a program to the compiler for compilation without executing the resulting program. |
+| FR7 | Must have | The system shall allow a user to submit a program for execution and display the resulting program output or runtime result. |
+| FR8 | Should have | When the compiler provides additional information, such as an abstract syntax tree or generated code, the system shall allow the user to inspect that information separately from the primary program result. |
+| FR9 | Must have | When the compiler rejects a program, the system shall display the compiler's error information to the user. |
+| FR10 | Should have | When the compiler provides a source location for an error, the system shall identify that location and provide a link for the user to navigate to it in the source. |
+| FR11 | Must have | The system shall distinguish between compilation errors, failures that occur while running a program, and failures caused by the environment or inability to communicate with the compiler. |
+| FR12 | Must have | The system shall provide a way for the user to stop a program that is currently running. |
+| FR13 | Must have | The system shall identify the program version associated with a compilation or execution result. |
+| FR14 | Must have | The system shall allow the user to continue viewing and interacting with the program being edited while compilation or execution is in progress, subject to operations that cannot safely be performed simultaneously. |
+| FR15 | Must have | The system shall allow a user to create a named test containing a LAMBDA program and an expected outcome. |
+| FR16 | Must have | The system shall allow a test to specify both an expected successful result, such as an integer or Boolean value; and an expected compilation failure. |
+| FR17 | Must have | The system shall allow a user to run multiple saved tests as a collection. |
+| FR18 | Must have | A failure of one test shall not prevent the remaining tests in the collection from being evaluated. |
+| FR19 | Must have | After running a test collection, the system shall provide a summary showing which tests passed and failed and the location and description about failed tests. |
+
+FR8 is a should have because the brief says it would be "useful." It could be added in later versions when the compiler is finished.
+FR10 is a should have because I assumed that the stakeholder would want to have a direct link to the error line. If it turns out the stakeholder actually did not want this, it would be better because it's not as high priority as the other requirements.
+All other requirements are a must have as stated in the brief.
+
+### Quality Requirements
+
+| # | Priority | Requirement Description |
+| --- | --- | --- |
+| QR1 | Must have | The main program-editing, compiling, running, saving, and testing operations shall be usable with a keyboard. |
+| QR2 | Must have | The first version shall operate in current versions of commonly used desktop browsers, including Chrome, Firefox, Safari, and Edge. |
+| QR3 | Must have | Important information, including errors and test outcomes, shall not be communicated through color alone. |
+
+
+## 4. Acceptance Criteria
+
+| Requirement | Starting Conditions | Action or Input | Observable Expected Result |
+| --- | --- | --- | --- |
+| FR3 | An example program is available in the system. | Open the example, create a copy, and modify the copied program. Then reopen the original example. | The copied program contains the user's modifications, while the original example remains unchanged. |
+| FR6 | A valid LAMBDA program is open in the editor. | Select Compile. | The system sends the program for compilation and displays the compilation result without executing the program. |
+| FR7 | A valid LAMBDA program whose result is known is open in the editor. | Select Run. | The system executes the program and displays the resulting value/output. |
+| FR10 | A LAMBDA program containing a compilation error is open, and the compiler reports a source location for the error. | Compile the program and select the reported error/location. | The system identifies the compiler error and allows the user to navigate to the corresponding location in the source editor. |
+| FR12 | A LAMBDA program that takes a long time to execute or does not terminate is open. | Start the program and then select the cancellation/stop operation. | Execution stops, and the environment returns to a usable state without requiring the user to close or refresh the browser. |
+| FR18 | A test collection contains several tests, including at least one test that is expected to fail. | Run the entire test collection. | The failing test is reported as failed, but the remaining tests are also executed and receive their own results. |
+| Failure Scenarios | --- | --- | --- |
+| FR11 | A valid LAMBDA program is open and has been saved. The compiler is unavailable or cannot be reached. | The user attempts to compile or run the program. | The system reports that the compiler/environment could not be reached and does not present the problem as a compilation error in the user's program. The user's saved program remains available. |
+| FR13 | A LAMBDA program is open. The program takes long enough to execute that it is possible to modify the source while the execution is still in progress. | 1. Start execution of the program. 2. Modify the program while the first execution is still running. 3. Wait for the first execution to finish. | The displayed result is clearly associated with the original version of the program that was submitted for execution, rather than being incorrectly presented as the result of the modified program. |
+
+## 5. Traceability and Review
+
+| Functional Requirement # | Source
+| --- | --- |
+| FR1 | Brief - "I imagine opening the page, typing or pasting a short program" |
+| FR2 | Brief - "Having a few examples to start from would help." |
+| FR3 | Brief - "Students should be able to modify an example without losing access to the original." Assumption - Users can copy a program and modify the copied program. |
+| FR4 | Brief - "Students may already have programs saved in files, and they should not have to retype them." |
+| FR5 | Brief - "They should also be able to keep a program they have written and return to it later." |
+| FR6 | Brief - "Sometimes I only want to check whether a program compiles." |
+| FR7 | Brief - "At other times, I want to run it and see the answer." |
+| FR8 | Brief - "For teaching, it would also be useful to inspect information the compiler produces, such as an abstract syntax tree or generated code, when that information is available." |
+| FR9 | Brief - "If there is a mistake in the program, I want the student to see a useful explanation." |
+| FR10 | Brief - "When the compiler reports where the problem occurred, the environment should help the student find that place in the source." |
+| FR11 | Brief - "A compilation error and a failure while running the program should not look like the same thing." |
+| FR12 | Brief - "Some examples may run for a long time, and a recursive program might never finish. There should be a way to stop it and move on." |
+| FR13 | Brief - "If I change a program while an earlier run is still working, I need to know which version produced the result I am seeing." |
+| FR14 | Brief - "The page should remain usable while work is in progress." |
+| FR15 | Brief - "Each test would contain a program and some record of what should happen." |
+| FR16 | Brief - "Some tests would expect an answer, such as an integer or a Boolean value. Others would intentionally contain an error and expect the compiler to reject the program." |
+| FR17 | Brief - "Running one program at a time is useful, but I would also like students to keep a collection of named tests." |
+| FR18 | Brief - "One troublesome test should not make the rest of the collection useless." |
+| FR19 | Brief - "I would like a quick summary of which tests worked as expected, with enough detail to investigate the ones that did not." |
+| QR1 | Brief - "Students should be able to perform the main tasks with a keyboard" |
+| QR2 | Brief - "It should work in a browser students normally use." Assumption - Stakeholders want Chrome, Firefox, Safari, and Edge to be usable with the environment. |
+| QR3 | Brief - "messages should make sense without depending only on colors" |
+
+### Issues
+
+1. The brief says that messages should not depend only on color, but this it does not say how much color can be used. This would have to be further reviewed with the stakeholders to figure out what they want.
+2. The brief says that students should be able to modify an example without losing access to the original, but it does not specify how this should work. Creating a copy is the most logical option, so FR3 specifies that users can copy a program and modify the copy.
+3. The brief says that the environment should help students find the location of a compiler error, but “help” is ambiguous and could mean many different things, like highlighting the line, displaying a message, scrolling to the location, or providing a link. I assumed that it would provide a link to the line of error, since that's what many IDEs do. FR10 requires that compiler errors have a link.
