@@ -1,8 +1,6 @@
 # CS413-2026-Fall
+For teaching (Agentic) Software Engineering
 
-<<<<<<< HEAD
-## AI Reflection
-=======
 ## Course website (Cloudflare Pages)
 
 The `public/` directory is a standalone static website. Edit `public/index.html`
@@ -41,7 +39,44 @@ Publish only `public/`; the rest of the repository is not website output.
 See the [Cloudflare static HTML guide](https://developers.cloudflare.com/pages/framework-guides/deploy-anything/).
 
 ## Mirroring this repository
->>>>>>> upstream/main
+
+Please create a private repository that mirrors this one and update
+frequently.
+
+Step 1:
+
+Please clone the class repository:
+
+```
+git clone https://github.com/hwxi/CS413-2026-Fall
+```
+
+Step 2:
+
+Please create a repository of your own.
+For instance, the following one is created
+for my own use:
+
+https://github.com/githwxi/CS413-2026-Fall-hwxi
+
+Then please mirror-push the class repo into your own repo:
+
+```
+cd CS413-2026-Fall
+git push --mirror https://github.com/githwxi/CS413-2026-Fall-hwxi
+git clone https://github.com/githwxi/CS413-2026-Fall-hwxi
+cd CS413-2026-Fall-hwxi
+git remote add upstream https://hwxi@github.com/hwxi/CS413-2026-Fall.git
+```
+
+Step 3:
+
+Please remember to sync with the class repo *frequently*:
+
+```
+git fetch upstream
+git merge upstream/main main
+```
 
 Codex followed the initial prompt well and translated the source code into Python-3 
 quite accurately. Some of the ATS functions, like `board_set` `search`, were 
