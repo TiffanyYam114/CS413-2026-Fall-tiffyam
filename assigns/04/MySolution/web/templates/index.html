@@ -1,9 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>LAMBDA Environment</title>
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="{% static 'source-menu.css' %}">
+        <script type="module" src="{% static 'source-menu.js' %}"></script>
     </head>
 
     <body>
@@ -12,6 +15,31 @@
 
             <div class="input-container">
                 <h2>Input</h2>
+                <label for="source-menu">Load source</label>
+                <select id="source-menu" aria-describedby="source-help">
+                    <option value="">Select a source…</option>
+                    <option value="file">Choose File</option>
+                    <option value="manual">Manual input</option>
+                    <option value="factorial">Factorial (canned)</option>
+                    <option value="fibonacci">Fibonacci (canned)</option>
+                </select>
+
+                <input id="source-file" type="file"
+                    accept=".txt,.lambda,.py,text/plain" aria-label="Choose a UTF-8 source file" hidden>
+                <p id="source-help">Choose a local UTF-8 text file, start with a blank editor,
+                    or load an editable example. Files must be at most 64 KiB.</p>
+
+                <p class="source-details">
+                    Source: <span id="source-name">No source loaded</span>
+                    &middot; Applied revision: <span id="source-revision">0</span>
+                </p>
+
+                <label for="source-editor">LAMBDA constructor expression</label>
+                <textarea id="source-editor" rows="16" spellcheck="false"
+                    aria-describedby="source-help source-status"
+                    placeholder='D0Eop2("+", D0Eint(20), D0Eint(22))'></textarea>
+                <p id="source-status" role="status" aria-live="polite">Choose a source or type in the editor.</p>
+                <p id="source-error" role="alert" hidden></p>
             </div>
 
             <div class="actions-container">
