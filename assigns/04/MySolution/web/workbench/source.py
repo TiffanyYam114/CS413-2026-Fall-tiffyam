@@ -1,5 +1,6 @@
 """Applied source and editable drafts, independent of Django and the browser."""
 from threading import RLock
+from .tools import OPERATIONS, Outcome
 
 MAX_SOURCE_BYTES = 64 * 1024
 
@@ -10,6 +11,19 @@ class SourceError(ValueError):
 
 class SourceConflict(ValueError):
     """The requested operation conflicts with current application state."""
+
+
+def validate_source(text):
+    if not isinstance(text, str):
+        raise SourceError("Source must be text.")
+    if not text.strip():
+        raise SourceError("Source cannot be empty or whitespace only.")
+    try:
+        size = len(text.encode("utf-8"))
+    except UnicodeEncodeError as exc:
+        raise SourceError("Source must be valid UTF-8 text.") from exc
+    if size > MAX_SOURCE_BYTES:
+        raise SourceError("Source exceeds the 64 KiB (65536-byte) UTF-8 limit.")
 
 
 class SourceModel:
@@ -23,11 +37,16 @@ class SourceModel:
         self.draft_name = "Manual input"
         self.manual_pending = False
         self.draft_error = None
+        self.busy = None
+        self.results = []
+        self.artifact = None
 
     def _dirty(self):
         return self.manual_pending or self.draft != (self.source or "")
 
     def _check_version(self, version):
+        if self.busy:
+            raise SourceConflict(f"{self.busy.title()} is running. Wait for it to finish.")
         if version is not None and version != self.version:
             raise SourceConflict("Source changed in another request. Your editor text was retained; refresh to see the current source.")
 
@@ -36,18 +55,7 @@ class SourceModel:
         if self._dirty():
             raise SourceConflict("Apply or discard changes before replacing source.")
 
-    @staticmethod
-    def _validate(text):
-        if not isinstance(text, str):
-            raise SourceError("Source must be text.")
-        if not text.strip():
-            raise SourceError("Source cannot be empty or whitespace only.")
-        try:
-            size = len(text.encode("utf-8"))
-        except UnicodeEncodeError as exc:
-            raise SourceError("Source must be valid UTF-8 text.") from exc
-        if size > MAX_SOURCE_BYTES:
-            raise SourceError("Source exceeds the 64 KiB (65536-byte) UTF-8 limit.")
+    _validate = staticmethod(validate_source)
 
     def _edit(self, text):
         if not isinstance(text, str):
@@ -64,6 +72,8 @@ class SourceModel:
         self.draft_error = None
         self.revision += 1
         self.version += 1
+        self.results.clear()
+        self.artifact = None
 
     def manual(self, version=None):
         with self._lock:
@@ -126,6 +136,32 @@ class SourceModel:
                 raise SourceConflict("Apply or load source before running a tool.")
             return self.source, self.revision
 
+    def begin_operation(self, operation, version=None):
+        with self._lock:
+            if operation not in OPERATIONS:
+                raise SourceError("Unknown tool action.")
+            source, revision = self.require_applied_source(version)
+            if operation == "execute" and (self.artifact is None or self.artifact.revision != revision):
+                raise SourceConflict("Execute runs generated code. It is unavailable until compilation is implemented and produces an artifact.")
+            if operation == "compile":
+                self.artifact = None
+            self.busy = operation
+            self.version += 1
+            return revision, source, self.artifact
+
+    def finish_operation(self, result, artifact=None):
+        with self._lock:
+            if result.operation != self.busy or result.revision != self.revision:
+                raise SourceConflict("A stale or mismatched tool result cannot change the source model.")
+            if artifact is not None:
+                if (result.operation != "compile" or result.outcome != Outcome.SUCCESS
+                        or artifact.revision != self.revision):
+                    raise SourceConflict("Generated code must come from successful compilation of this revision.")
+                self.artifact = artifact
+            self.results.append(result)
+            self.busy = None
+            self.version += 1
+
     def snapshot(self):
         with self._lock:
             return {
@@ -133,4 +169,12 @@ class SourceModel:
                 "revision": self.revision, "version": self.version,
                 "draft": self.draft, "draft_name": self.draft_name,
                 "dirty": self._dirty(), "max_source_bytes": MAX_SOURCE_BYTES,
+                "busy": self.busy,
+                "artifact_available": self.artifact is not None and self.artifact.revision == self.revision,
+                "execute_reason": ("Generated code for this revision is available." if self.artifact is not None else
+                    "Execute runs generated code. It is unavailable until compilation is implemented and produces an artifact."),
+                "results": [{"operation": result.operation, "revision": result.revision,
+                             "outcome": result.outcome.value, "text": result.text,
+                             "free_variables": sorted(result.free_variables) if result.free_variables is not None else None}
+                            for result in self.results],
             }

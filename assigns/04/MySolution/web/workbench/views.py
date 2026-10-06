@@ -6,9 +6,11 @@ from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from .controller import SourceController
+from .backend import LambdaBackend
 from .source import SourceConflict, SourceError, SourceModel
 
 source_model = SourceModel()  # Local, single-user state; discarded on server restart.
+language_backend = LambdaBackend()
 MAX_REQUEST_BYTES = 2 * 1024 * 1024
 
 
@@ -75,13 +77,13 @@ def source(request):
 
 @require_POST
 def action(request):
-    """Guard tool entry now; later steps will connect the language adapter here."""
+    """Start bounded language work; the browser polls source state for results."""
     try:
         payload = data(request)
         if payload.get("operation") not in ("lint", "interpret", "typecheck", "compile", "execute"):
             raise SourceError("Unknown tool action.")
-        source_model.require_applied_source(version(payload.get("version")))
-        return response("This tool action is not available yet.", 501)
+        SourceController(source_model, language_backend).action(payload["operation"], version(payload.get("version")))
+        return response(status=202)
     except SourceError as exc:
         return response(str(exc), 400)
     except SourceConflict as exc:
