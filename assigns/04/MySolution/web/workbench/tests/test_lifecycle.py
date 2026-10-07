@@ -5,10 +5,10 @@ import unittest
 from unittest.mock import patch
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import SimpleTestCase, override_settings
-from .controller import SourceController
-from .source import SourceConflict, SourceError, SourceModel
+from ..controller import SourceController
+from ..source import SourceConflict, SourceError, SourceModel
 from .test_tools import RecordingBackend, wait_idle
-from .tools import Artifact, BackendReply, Outcome, Result
+from ..tools import Artifact, BackendReply, Outcome, Result
 
 
 class LifecycleModelTests(unittest.TestCase):

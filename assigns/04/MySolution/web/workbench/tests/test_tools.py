@@ -5,13 +5,13 @@ import time
 import unittest
 from unittest.mock import patch
 from django.test import SimpleTestCase, override_settings
-from . import lambda1 as L
-from .backend import LambdaBackend, perform
-from .controller import SourceController
-from .examples import EXAMPLES
-from .reader import InputError, read_expression
-from .source import SourceConflict, SourceModel
-from .tools import Artifact, BackendReply, Outcome
+from .. import lambda1 as L
+from ..backend import LambdaBackend, perform
+from ..controller import SourceController
+from ..examples import EXAMPLES
+from ..reader import InputError, read_expression
+from ..source import SourceConflict, SourceModel
+from ..tools import Artifact, BackendReply, Outcome
 
 
 def wait_idle(model, timeout=5):

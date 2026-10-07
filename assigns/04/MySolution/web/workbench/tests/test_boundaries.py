@@ -6,12 +6,12 @@ import time
 import unittest
 from unittest.mock import patch
 
-from . import lambda1 as L
-from .backend import perform
-from .controller import SourceController
-from .reader import SCHEMAS, read_expression
-from .source import SourceConflict, SourceModel
-from .tools import Artifact, BackendReply, GeneratedCode, Outcome
+from .. import lambda1 as L
+from ..backend import perform
+from ..controller import SourceController
+from ..reader import SCHEMAS, read_expression
+from ..source import SourceConflict, SourceModel
+from ..tools import Artifact, BackendReply, GeneratedCode, Outcome
 
 
 def completed(model):
@@ -65,7 +65,7 @@ print("independent model passed")
 '''
         result = subprocess.run([sys.executable, "-I", "-c",
                                  "import sys; sys.path.insert(0, "
-                                 + repr(str(Path(__file__).resolve().parents[1])) + ");\n" + script],
+                                 + repr(str(Path(__file__).resolve().parents[2])) + ");\n" + script],
                                 capture_output=True, text=True, timeout=10)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("independent model passed", result.stdout)

@@ -8,7 +8,7 @@ from socketserver import ThreadingMixIn
 from threading import Thread
 from wsgiref.simple_server import WSGIServer, WSGIRequestHandler, make_server
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 
 
 class ThreadedServer(ThreadingMixIn, WSGIServer):
