@@ -1,5 +1,8 @@
 ## Automated Tests
 
+To run automated tests in MySolution/web directory, run 
+`.\.venv\Scripts\python.exe manage.py test workbench.tests.tests`
+
 | File | What it Tests |
 | --- | --- |
 | `workbench/tests1.py` | Manual input, original source replacement prevention, apply/discard edits, block actions while edits have not been applied, invalid input, file size limit. |
@@ -8,6 +11,9 @@
 | `workbench/test_boundaries.py` | Tests model functionality without browser or web server, controller functionality without backend. |
 
 ## Browser Tests
+
+To run browser tests in MySolution/web directory, run
+`.\.venv\Scripts\python.exe -m workbench.tests.browser_smoke --channel chrome`
 
 | File | What it Tests |
 | --- | --- |
