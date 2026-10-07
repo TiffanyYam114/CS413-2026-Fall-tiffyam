@@ -31,3 +31,8 @@ Write automated tests to cover requirements. Also add tests for F1-F10 and a bro
 
 ### AI Output & Testing:
 Codex created several test files targetting specific areas. I ran each one separately and verified that all tests passed.
+
+## Prompt 5
+
+### Prompt:
+Design the MVC architecture (task 1).
