@@ -1,0 +1,2 @@
+# This program is closed: Lint passes, but Interpret divides by zero.
+D0Eop2("/", D0Eint(1), D0Eint(0))

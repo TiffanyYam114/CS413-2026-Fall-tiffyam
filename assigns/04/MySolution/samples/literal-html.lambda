@@ -1,0 +1,2 @@
+# Source and output must show this variable name as text, never markup.
+D0Evar("<img src=x onerror=alert(1)>")
