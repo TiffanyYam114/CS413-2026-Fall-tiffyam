@@ -23,3 +23,11 @@ Implement F8-F10.
 
 ### AI Output & Testing:
 Selecting factorial or fibonacci increases the revision number by one. Adding input and applying changes also increases by one. Adding input but discarding changes does not change revision number. Having the same source and testing out many buttons creates multiple stacked outputs. Output shows the selected action, revision number, and outcome. Applying changes or choosing a different source type clears all outputs. Clicking on a button shows a "busy" message and makes all buttons uninteractable. Upon completion, restores button availability. Reloading preserves the source code, revision, and outputs.
+
+## Prompt 4
+
+### Prompt:
+Write automated tests to cover requirements. Also add tests for F1-F10 and a browser smoke.
+
+### AI Output & Testing:
+Codex created several test files targetting specific areas. I ran each one separately and verified that all tests passed.
