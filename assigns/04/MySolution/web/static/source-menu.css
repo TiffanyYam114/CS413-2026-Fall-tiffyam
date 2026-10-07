@@ -1,0 +1,83 @@
+.input-container {
+    max-width: 56rem;
+}
+
+.input-container label {
+    display: block;
+    margin: 1rem 0 .4rem;
+    font-weight: bold;
+}
+
+.input-container select {
+    padding: .5rem;
+    max-width: 100%;
+    font: inherit;
+}
+
+.input-container textarea {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    padding: .75rem;
+    resize: vertical;
+    font: .95rem/1.5 Consolas, monospace;
+}
+
+.input-container .source-details,
+.input-container #source-status,
+.input-container #source-error {
+    overflow-wrap: anywhere;
+}
+
+.input-container #source-help {
+    color: #444;
+}
+
+.input-container #source-error {
+    color: #9b1c1c;
+}
+
+.input-container :focus-visible {
+    outline: 3px solid #215bc0;
+    outline-offset: 3px;
+}
+
+.input-container .edit-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-top: .75rem;
+}
+
+.input-container button {
+    padding: .5rem .75rem;
+    font: inherit;
+}
+
+button:disabled,
+select:disabled {
+    cursor: not-allowed;
+}
+
+.output-container {
+    max-width: 56rem;
+}
+
+.tool-result {
+    margin: 1rem 0;
+    padding: .75rem;
+    border-left: 3px solid #215bc0;
+    background: #f5f7fb;
+}
+
+.tool-result h3 {
+    margin: 0 0 .5rem;
+    font-size: 1rem;
+}
+
+.tool-result pre {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font: .95rem/1.5 Consolas, monospace;
+}
