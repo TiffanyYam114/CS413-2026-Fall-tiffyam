@@ -1,5 +1,6 @@
 Requires Python 3.12 or later.
 
+
 ## Fresh-Name Policy
 
 The deterministic fresh-name policy chooses the smallest positive suffix
@@ -59,3 +60,30 @@ Alternatively, collect all four files in a single pytest run:
 ```powershell
 python -B -m pytest -p no:cacheprovider MySolution/test_pretty_unittest.py MySolution/test_substitution_unittest.py MySolution/test_pretty_pytest.py MySolution/test_substitution_pytest.py
 ```
+
+
+## Design Explanation
+
+The visitor class lets each visitor choose its result type based on its input type. 
+This lets the same visitor class support different operations. PrettyPrintVisitor 
+returns a string, while SubstitutionVisitor returns an expression. 
+
+Substitution needs information as it moves through the tree. The visitor stores the 
+target variable, the replacement expression, and the replacement's free variable names. 
+It also keeps a set of names that cannot be used for new binder names, including names 
+from all variable and binder names in the original expression, the target variable, the 
+replacement variable, and already generated names. Each new substitution call starts 
+with a new set of reserved names, so different substitution calls do not affect each other.
+
+Renaming prevents binders from capturing free variables in the replacement. A body 
+stays unchanged if its binder is the target or the the binder is not in the original 
+expression. Otherwise, conflicting binders get unused names, and only their own variable 
+uses are renamed. Nested binders with the same name are handled separately. A `let` 
+binds its name only in its body, so its initializer is processed separately. A `fix` 
+binds both its function name and parameter in its body; if they match, renaming keeps 
+them equal, so the parameter still takes priority.
+
+Adding an operation means writing another visitor with a method for each constructor. 
+The constructors stay unchanged. However, adding a new constructor requires adding a 
+new function to each visitor class so that all visitor classes include that constructor. 
+This design makes new operations easy to add, while new constructors need changes in several places. 
