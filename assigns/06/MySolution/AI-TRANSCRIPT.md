@@ -31,11 +31,14 @@ constructors through the supplied visitor interface without evaluating them. Use
 Implement task 4.
 
 ### Output Review and Testing:
-The decoders turn Church-encoded results into Python numbers, booleans, and
-pairs. They use the same evaluator as the rest of the project. Running a
-program and decoding its result have separate step limits and counts.
-Decoding a nested pair shares one step limit across all its parts. If decoding
-runs out of steps or finds an invalid result, it reports the problem instead
-of returning an answer. `examples.py` contains the given demonstrations. `test_decoders.py` contains tests for invalid results, nested pairs, recursion, and insufficient step budgets. Running the file passes all tests. 
+The decoders turn Church-encoded results into Python numbers, booleans, and pairs. They use the same evaluator as the rest of the project. Running a program and decoding its result have separate step limits and counts. Decoding a nested pair shares one step limit across all its parts. If decoding runs out of steps or finds an invalid result, it reports the problem instead of returning an answer. `examples.py` contains the given demonstrations. `test_decoders.py` contains tests for invalid results, nested pairs, recursion, and insufficient step budgets. Running the file passes all tests. 
 
 Running the command `python -B -m MySolution.demo` runs all examples in `examples.py` through compilation, target reduction, and decoding. All output is saved in `demo_output`. Each example saves its own file with the pure lambda terms, and `report.txt` shows the complete results. 
+
+## Prompt 5
+
+### Prompt:
+Take a look at the testing and correctness argument section and verify that the test files include all required tests. If a test is not included, add it.
+
+### Output Review and Testing:
+Provided `TEST_COVERAGE.md`, which maps all 7 required tests to the corresponding file and method. 
