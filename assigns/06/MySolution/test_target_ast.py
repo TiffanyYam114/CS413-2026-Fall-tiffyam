@@ -1,6 +1,7 @@
 """Run from assigns/06 with python -m unittest MySolution.test_target_ast."""
 
 import unittest
+from copy import deepcopy
 from unittest.mock import patch
 
 from . import target_ast
@@ -58,6 +59,15 @@ class TargetOperationsTests(unittest.TestCase):
         self.assertEqual(result, Lam("y_2", replacement))
         self.assertEqual(pretty(replacement), before)
         self.assertEqual(free_vars(result), {"y"})
+
+    def test_substitution_changes_free_occurrences_only(self):
+        term = Lam("y", App(Var("x"), Lam("x", Var("x"))))
+        self.assertEqual(substitute(term, "x", Var("z")),
+                         Lam("y", App(Var("z"), Lam("x", Var("x")))))
+        # No substitution is needed, so a conflicting replacement does not
+        # justify renaming an otherwise unchanged binder.
+        untouched = Lam("y", Var("z"))
+        self.assertEqual(substitute(untouched, "x", Var("y")), untouched)
 
 
 class EvaluationTests(unittest.TestCase):
@@ -157,6 +167,18 @@ class EvaluationTests(unittest.TestCase):
         before = pretty(term)
         evaluate(term)
         self.assertEqual(pretty(term), before)
+
+    def test_exhaustion_is_deterministic_and_preserves_input(self):
+        for term in (self.omega, App(self.identity, self.omega)):
+            before = deepcopy(term)
+            for budget in (0, 1, 25):
+                with self.subTest(term=term, budget=budget):
+                    first = evaluate(term, budget)
+                    second = evaluate(term, budget)
+                    self.assertEqual(first, second)
+                    self.assertEqual(first.status, "exhausted")
+                    self.assertEqual(first.steps, budget)
+                    self.assertEqual(term, before)
 
     def test_source_scope_and_coincident_fix_names(self):
         term = s.D0Elet("x", s.D0Eint(3),
