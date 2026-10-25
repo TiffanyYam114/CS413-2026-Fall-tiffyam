@@ -1,7 +1,9 @@
 """Run from assigns/06 with python -m unittest MySolution.test_target_ast."""
 
 import unittest
+from unittest.mock import patch
 
+from . import target_ast
 from .target_ast import (
     App, Lam, Var, all_names, evaluate, free_vars, fresh_name, pretty, substitute,
 )
@@ -49,6 +51,14 @@ class TargetOperationsTests(unittest.TestCase):
             Lam("y_1", App(Var("y"), Lam("y", Var("y")))),
         )
 
+    def test_substitution_preserves_replacement_and_avoids_its_bound_names(self):
+        replacement = App(Var("y"), Lam("y_1", Var("y_1")))
+        before = pretty(replacement)
+        result = substitute(Lam("y", Var("x")), "x", replacement)
+        self.assertEqual(result, Lam("y_2", replacement))
+        self.assertEqual(pretty(replacement), before)
+        self.assertEqual(free_vars(result), {"y"})
+
 
 class EvaluationTests(unittest.TestCase):
     def setUp(self):
@@ -81,6 +91,52 @@ class EvaluationTests(unittest.TestCase):
         self.assertEqual(result.value, self.identity)
         self.assertEqual(result.steps, 3)
         self.assertEqual(evaluate(term, 3), result)
+
+    def test_exact_left_to_right_beta_contraction_order(self):
+        term = App(
+            App(Lam("function_first", Var("function_first")), self.identity),
+            App(Lam("argument_second", Var("argument_second")), self.identity),
+        )
+        contracted_parameters = []
+        original_substitute = substitute
+
+        def record(body, name, replacement):
+            # Instrument actual contractions without changing the evaluator.
+            self.assertIsInstance(replacement, Lam)
+            contracted_parameters.append(name)
+            return original_substitute(body, name, replacement)
+
+        with patch.object(target_ast, "substitute", side_effect=record):
+            result = evaluate(term, 3)
+        self.assertEqual(contracted_parameters, ["function_first", "argument_second", "x"])
+        self.assertEqual(result.steps, 3)
+        self.assertEqual(result.value, self.identity)
+
+    def test_no_eta_reduction(self):
+        term = Lam("f", Lam("x", App(Var("f"), Var("x"))))
+        result = evaluate(term, 0)
+        self.assertTrue(result.completed)
+        self.assertEqual(result.value, term)
+        self.assertEqual(result.steps, 0)
+
+    def test_target_execution_does_not_load_source_operations(self):
+        # Church TRUE selects its first argument through ordinary substitution.
+        church_true = Lam("t", Lam("f", Var("t")))
+        other = Lam("a", Lam("b", Var("b")))
+        term = App(App(church_true, self.identity), other)
+        with patch.object(target_ast, "_source_module", side_effect=AssertionError("source path used")):
+            result = evaluate(term, 2)
+        self.assertTrue(result.completed)
+        self.assertEqual(result.value, self.identity)
+        self.assertEqual(result.steps, 2)
+
+    def test_every_budget_boundary_in_nested_evaluation(self):
+        term = App(App(self.identity, self.identity), App(self.identity, self.identity))
+        for budget in range(5):
+            with self.subTest(budget=budget):
+                result = evaluate(term, budget)
+                self.assertEqual(result.steps, min(budget, 3))
+                self.assertEqual(result.completed, budget >= 3)
 
     def test_unused_divergent_argument_and_large_budget(self):
         term = App(Lam("unused", self.identity), self.omega)
