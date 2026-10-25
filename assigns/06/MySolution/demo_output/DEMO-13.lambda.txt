@@ -1,0 +1,1 @@
+(((lam p. (lam q. ((((lam c. (lam t. (lam f. (((c t) f) (lam w. w))))) p) q) (lam u_1. (lam t. (lam f. f)))))) (lam t. (lam f. t))) (lam u_1. (lam t. (lam f. f))))
