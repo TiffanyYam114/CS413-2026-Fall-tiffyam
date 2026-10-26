@@ -1,4 +1,4 @@
-"""Encoding tests; observation uses only pure contexts in the shared reducer."""
+"""Run from assigns/06 with python -m unittest MySolution.test_church_encodings."""
 
 import unittest
 from unittest.mock import patch

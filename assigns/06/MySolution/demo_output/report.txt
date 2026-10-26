@@ -1,6 +1,6 @@
 DEMO-01: 2 + 3 * 4
   Source AST: D0Eop2(name='+', arg1=D0Eint(arg1=2), arg2=D0Eop2(name='*', arg1=D0Eint(arg1=3), arg2=D0Eint(arg1=4)))
-  Expected: 14; kind: 'nat'
+  Expected: 14; kind: 'num'
   Generated pure term: C:\Users\tiffa\Downloads\CS413-2026-Fall\CS413-2026-Fall-tiffyam\assigns\06\MySolution\demo_output\DEMO-01.lambda.txt
   Source result (shared evaluator): 14
   Execution: completed; beta-value steps: 4; budget: 50000
@@ -10,7 +10,7 @@ DEMO-01: 2 + 3 * 4
 
 DEMO-02: 2 - 5
   Source AST: D0Eop2(name='-', arg1=D0Eint(arg1=2), arg2=D0Eint(arg1=5))
-  Expected: 0; kind: 'nat'
+  Expected: 0; kind: 'num'
   Generated pure term: C:\Users\tiffa\Downloads\CS413-2026-Fall\CS413-2026-Fall-tiffyam\assigns\06\MySolution\demo_output\DEMO-02.lambda.txt
   Source result (shared evaluator): 0
   Execution: completed; beta-value steps: 87; budget: 50000
@@ -20,7 +20,7 @@ DEMO-02: 2 - 5
 
 DEMO-03: if 2 <= 3 then 7 else 9
   Source AST: D0Eif0(arg1=D0Eop2(name='<=', arg1=D0Eint(arg1=2), arg2=D0Eint(arg1=3)), arg2=D0Eint(arg1=7), arg3=D0Eint(arg1=9))
-  Expected: 7; kind: 'nat'
+  Expected: 7; kind: 'num'
   Generated pure term: C:\Users\tiffa\Downloads\CS413-2026-Fall\CS413-2026-Fall-tiffyam\assigns\06\MySolution\demo_output\DEMO-03.lambda.txt
   Source result (shared evaluator): 7
   Execution: completed; beta-value steps: 77; budget: 50000
@@ -30,7 +30,7 @@ DEMO-03: if 2 <= 3 then 7 else 9
 
 DEMO-04: let x = 3 in (lam y. x + y) 4
   Source AST: D0Elet(arg1='x', arg2=D0Eint(arg1=3), arg3=D0Eapp(arg1=D0Elam(arg1='y', arg2=D0Eop2(name='+', arg1=D0Evar(arg1='x'), arg2=D0Evar(arg1='y'))), arg2=D0Eint(arg1=4)))
-  Expected: 7; kind: 'nat'
+  Expected: 7; kind: 'num'
   Generated pure term: C:\Users\tiffa\Downloads\CS413-2026-Fall\CS413-2026-Fall-tiffyam\assigns\06\MySolution\demo_output\DEMO-04.lambda.txt
   Source result (shared evaluator): 7
   Execution: completed; beta-value steps: 4; budget: 50000
@@ -40,7 +40,7 @@ DEMO-04: let x = 3 in (lam y. x + y) 4
 
 DEMO-05: fst (pair 2 true)
   Source AST: D0Epfst(arg1=D0Epair(arg1=D0Eint(arg1=2), arg2=D0Ebtf(arg1=True)))
-  Expected: 2; kind: 'nat'
+  Expected: 2; kind: 'num'
   Generated pure term: C:\Users\tiffa\Downloads\CS413-2026-Fall\CS413-2026-Fall-tiffyam\assigns\06\MySolution\demo_output\DEMO-05.lambda.txt
   Source result (shared evaluator): 2
   Execution: completed; beta-value steps: 6; budget: 50000
@@ -60,7 +60,7 @@ DEMO-06: snd (pair 2 true)
 
 DEMO-07: (lam f. f 3) (lam x. x + 1)
   Source AST: D0Eapp(arg1=D0Elam(arg1='f', arg2=D0Eapp(arg1=D0Evar(arg1='f'), arg2=D0Eint(arg1=3))), arg2=D0Elam(arg1='x', arg2=D0Eop2(name='+', arg1=D0Evar(arg1='x'), arg2=D0Eint(arg1=1))))
-  Expected: 4; kind: 'nat'
+  Expected: 4; kind: 'num'
   Generated pure term: C:\Users\tiffa\Downloads\CS413-2026-Fall\CS413-2026-Fall-tiffyam\assigns\06\MySolution\demo_output\DEMO-07.lambda.txt
   Source result (shared evaluator): 4
   Execution: completed; beta-value steps: 4; budget: 50000
@@ -70,7 +70,7 @@ DEMO-07: (lam f. f 3) (lam x. x + 1)
 
 DEMO-08: if true then 1 else LOOP
   Source AST: D0Eif0(arg1=D0Ebtf(arg1=True), arg2=D0Eint(arg1=1), arg3=D0Eapp(arg1=D0Efix(arg1='loop', arg2='x', arg3=D0Eapp(arg1=D0Evar(arg1='loop'), arg2=D0Evar(arg1='x'))), arg2=D0Eint(arg1=0)))
-  Expected: 1; kind: 'nat'
+  Expected: 1; kind: 'num'
   Generated pure term: C:\Users\tiffa\Downloads\CS413-2026-Fall\CS413-2026-Fall-tiffyam\assigns\06\MySolution\demo_output\DEMO-08.lambda.txt
   Source result (shared evaluator): 1
   Execution: completed; beta-value steps: 3; budget: 50000
@@ -90,7 +90,7 @@ DEMO-09: (lam x. 0) LOOP
 
 DEMO-10: factorial(4)
   Source AST: D0Eapp(arg1=D0Efix(arg1='fact', arg2='n', arg3=D0Eif0(arg1=D0Eop2(name='==', arg1=D0Evar(arg1='n'), arg2=D0Eint(arg1=0)), arg2=D0Eint(arg1=1), arg3=D0Eop2(name='*', arg1=D0Evar(arg1='n'), arg2=D0Eapp(arg1=D0Evar(arg1='fact'), arg2=D0Eop2(name='-', arg1=D0Evar(arg1='n'), arg2=D0Eint(arg1=1)))))), arg2=D0Eint(arg1=4))
-  Expected: 24; kind: 'nat'
+  Expected: 24; kind: 'num'
   Generated pure term: C:\Users\tiffa\Downloads\CS413-2026-Fall\CS413-2026-Fall-tiffyam\assigns\06\MySolution\demo_output\DEMO-10.lambda.txt
   Source result (shared evaluator): 24
   Execution: completed; beta-value steps: 353; budget: 50000
@@ -100,7 +100,7 @@ DEMO-10: factorial(4)
 
 DEMO-11: Fibonacci(5)
   Source AST: D0Eapp(arg1=D0Efix(arg1='fib', arg2='n', arg3=D0Eif0(arg1=D0Eop2(name='<=', arg1=D0Evar(arg1='n'), arg2=D0Eint(arg1=1)), arg2=D0Evar(arg1='n'), arg3=D0Eop2(name='+', arg1=D0Eapp(arg1=D0Evar(arg1='fib'), arg2=D0Eop2(name='-', arg1=D0Evar(arg1='n'), arg2=D0Eint(arg1=1))), arg2=D0Eapp(arg1=D0Evar(arg1='fib'), arg2=D0Eop2(name='-', arg1=D0Evar(arg1='n'), arg2=D0Eint(arg1=2)))))), arg2=D0Eint(arg1=5))
-  Expected: 5; kind: 'nat'
+  Expected: 5; kind: 'num'
   Generated pure term: C:\Users\tiffa\Downloads\CS413-2026-Fall\CS413-2026-Fall-tiffyam\assigns\06\MySolution\demo_output\DEMO-11.lambda.txt
   Source result (shared evaluator): 5
   Execution: completed; beta-value steps: 1794; budget: 50000
@@ -140,7 +140,7 @@ DEMO-14: false or true
 
 EXTRA-01: pair (pair 2 true) 3
   Source AST: D0Epair(arg1=D0Epair(arg1=D0Eint(arg1=2), arg2=D0Ebtf(arg1=True)), arg2=D0Eint(arg1=3))
-  Expected: ((2, True), 3); kind: (('nat', 'bool'), 'nat')
+  Expected: ((2, True), 3); kind: (('num', 'bool'), 'num')
   Generated pure term: C:\Users\tiffa\Downloads\CS413-2026-Fall\CS413-2026-Fall-tiffyam\assigns\06\MySolution\demo_output\EXTRA-01.lambda.txt
   Source result (shared evaluator): ((2, True), 3)
   Execution: completed; beta-value steps: 4; budget: 50000

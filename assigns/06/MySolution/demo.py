@@ -28,7 +28,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--execution-budget", type=_nonnegative, default=50000)
     parser.add_argument("--observation-budget", type=_nonnegative, default=50000)
-    parser.add_argument("--divergence-budget", type=_nonnegative, default=200)
+    parser.add_argument("--loop-budget", type=_nonnegative, default=200)
     parser.add_argument("--output-dir", type=Path,
                         default=Path(__file__).resolve().parent / "demo_output")
     args = parser.parse_args(argv)
@@ -43,7 +43,7 @@ def main(argv: list[str] | None = None) -> int:
         path = args.output_dir / f"{example.name}.lambda.txt"
         path.write_text(pretty(term) + "\n", encoding="utf-8")
         lines.append(f"  Generated pure term: {path.resolve()}")
-        budget = args.divergence_budget if example.kind is None else args.execution_budget
+        budget = args.loop_budget if example.kind is None else args.execution_budget
         if example.kind is None:
             # Never run a known divergent source example through unbounded evaluation.
             execution = evaluate(term, budget)

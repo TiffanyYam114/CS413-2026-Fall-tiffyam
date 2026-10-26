@@ -1,4 +1,4 @@
-"""Task 4 observer and demo acceptance tests."""
+"""Run from assigns/06 with python -m unittest MySolution.test_decoders."""
 
 from contextlib import redirect_stdout
 from io import StringIO
@@ -39,16 +39,16 @@ class DecoderTests(unittest.TestCase):
 
     def test_execution_and_observation_have_independent_counts(self):
         term = c.apply(c.ADD(), c.NUM(2), c.NUM(3))
-        result = observe(term, "nat", 500, 500)
+        result = observe(term, "num", 500, 500)
         self.assertTrue(result.execution.completed)
         self.assertTrue(result.observation.completed)
         self.assertEqual(result.observation.value, 5)
         self.assertEqual(result.execution.steps, evaluate(term, 500).steps)
         self.assertGreater(result.observation.steps, 0)
-        failed_execution = observe(term, "nat", 0, 500)
+        failed_execution = observe(term, "num", 0, 500)
         self.assertFalse(failed_execution.execution.completed)
         self.assertIsNone(failed_execution.observation)
-        failed_observation = observe(term, "nat", 500, 0)
+        failed_observation = observe(term, "num", 500, 0)
         self.assertTrue(failed_observation.execution.completed)
         self.assertEqual(failed_observation.observation.status, "exhausted")
         self.assertIsNone(failed_observation.observation.value)
@@ -68,7 +68,7 @@ class DecoderTests(unittest.TestCase):
         dup = Lam("x", App(Var("x"), Var("x")))
         value = Lam("s", Lam("z", App(dup, dup)))
         self.assertTrue(evaluate(value, 0).completed)
-        for kind in ("nat", "bool"):
+        for kind in ("num", "bool"):
             result = observe_value(value, kind, 30)
             self.assertEqual(result.status, "exhausted")
             self.assertEqual(result.steps, 30)
@@ -77,7 +77,7 @@ class DecoderTests(unittest.TestCase):
     def test_malformed_outputs_and_invalid_inputs(self):
         bad_nat = Lam("s", Lam("z", c.I()))
         bad_bool = Lam("a", Lam("b", Lam("c", Lam("d", Var("d")))))
-        for value, kind in ((bad_nat, "nat"), (bad_bool, "bool"), (Var("x"), "nat"),
+        for value, kind in ((bad_nat, "num"), (bad_bool, "bool"), (Var("x"), "num"),
                             (Lam("x", Var("free")), "bool")):
             result = observe_value(value, kind)
             self.assertEqual(result.status, "malformed")
@@ -86,13 +86,13 @@ class DecoderTests(unittest.TestCase):
         for budget in (-1, True, 0.5):
             with self.assertRaises(ValueError):
                 observe_natural(c.NUM(0), budget)
-        for kind in ("number", None, ("nat",), ("nat", "invalid")):
+        for kind in ("number", None, ("num",), ("num", "invalid")):
             with self.assertRaises(ValueError):
                 observe_value(c.NUM(0), kind)
 
     def test_pair_evaluation_nested_observation_and_aggregate_budget(self):
         term = c.apply(c.PAIR(), c.apply(c.PAIR(), c.NUM(2), c.TRUE()), c.NUM(3))
-        kind = (("nat", "bool"), "nat")
+        kind = (("num", "bool"), "num")
         result = observe_pair(term, kind)
         self.assertEqual(result.observation.value, ((2, True), 3))
         self.assertGreater(result.execution.steps, 0)
@@ -105,7 +105,7 @@ class DecoderTests(unittest.TestCase):
         self.assertIsNone(short.observation.value)
         self.assertEqual(observe_pair(term, kind, execution_budget=0).observation, None)
         with self.assertRaises(ValueError):
-            observe_pair(term, "nat")
+            observe_pair(term, "num")
 
     def test_all_examples_with_production_observers(self):
         for example in examples():
@@ -125,7 +125,7 @@ class DecoderTests(unittest.TestCase):
         value = evaluate(function, 100).value
         self.assertIsInstance(value, Lam)
         self.assertEqual(evaluate(value, 0).steps, 0)
-        self.assertEqual(observe(c.apply(value, c.NUM(4)), "nat").observation.value, 24)
+        self.assertEqual(observe(c.apply(value, c.NUM(4)), "num").observation.value, 24)
 
 
 class DemoTests(unittest.TestCase):

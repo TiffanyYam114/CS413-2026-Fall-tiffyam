@@ -1,10 +1,3 @@
-"""Bounded pure-context observation through the existing shared evaluator.
-
-Kinds are 'nat', 'bool', or a tuple of two kinds for a (possibly nested) pair.
-An observation budget is shared by every projection and component context.
-Python inspects final shapes only; it never executes encoded operations.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -17,7 +10,7 @@ else:
     import church_encodings as c
     from target_ast import App, EvaluationResult, Lam, Term, Var, evaluate, free_vars
 
-type DataKind = Literal["nat", "bool"] | tuple[DataKind, DataKind]
+type DataKind = Literal["num", "bool"] | tuple[DataKind, DataKind]
 
 
 @dataclass(frozen=True)
@@ -44,13 +37,13 @@ def _budget(value: int) -> None:
 
 
 def _kind(kind: DataKind) -> None:
-    if kind in ("nat", "bool"):
+    if kind in ("num", "bool"):
         return
     if isinstance(kind, tuple) and len(kind) == 2:
         _kind(kind[0])
         _kind(kind[1])
         return
-    raise ValueError("expected kind 'nat', 'bool', or a pair of kinds")
+    raise ValueError("expected kind 'num', 'bool', or a pair of kinds")
 
 
 class _Malformed(Exception):
@@ -92,7 +85,7 @@ class _Observer:
         return result.value
 
     def decode(self, value: Lam, kind: DataKind) -> object:
-        if kind == "nat":
+        if kind == "num":
             step = Lam("tail", Lam("c", Lam("z", App(Var("c"), Var("tail")))))
             base = Lam("c", Lam("z", Var("z")))
             spine = self.run(c.apply(value, step, base))
@@ -148,7 +141,7 @@ def observe_value(value: Term, kind: DataKind, max_steps: int = 50000) -> Observ
 
 
 def observe_natural(value: Term, max_steps: int = 50000) -> ObservationResult:
-    return observe_value(value, "nat", max_steps)
+    return observe_value(value, "num", max_steps)
 
 
 def observe_boolean(value: Term, max_steps: int = 50000) -> ObservationResult:

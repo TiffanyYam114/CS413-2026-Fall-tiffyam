@@ -1,7 +1,7 @@
 """Compositional source-to-Church compilation using the supplied visitor API.
 
 No evaluation is performed. All source children (including unused branches)
-are visited. See DESIGN.md for translation rules and the naming policy.
+are visited.
 """
 
 from __future__ import annotations

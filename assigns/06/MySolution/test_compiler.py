@@ -1,4 +1,4 @@
-"""Task 3 acceptance tests using the shared evaluator and pure observations."""
+"""Run from assigns/06 with python -m unittest MySolution.test_compiler."""
 
 from copy import deepcopy
 import unittest
@@ -228,19 +228,19 @@ class CompilerTests(unittest.TestCase):
 
         cases = [
             (s.D0Eapp(tagged("trace_function", s.D0Elam("x", s.D0Evar("x"))),
-                       tagged("trace_argument", s.D0Eint(4))), "nat", 4,
+                       tagged("trace_argument", s.D0Eint(4))), "num", 4,
              ["trace_function", "trace_argument"]),
             (s.D0Elet("x", tagged("trace_init", s.D0Eint(2)),
-                      tagged("trace_body", s.D0Evar("x"))), "nat", 2,
+                      tagged("trace_body", s.D0Evar("x"))), "num", 2,
              ["trace_init", "trace_body"]),
             (s.D0Epair(tagged("trace_left", s.D0Eint(2)),
-                       tagged("trace_right", s.D0Ebtf(True))), ("nat", "bool"), (2, True),
+                       tagged("trace_right", s.D0Ebtf(True))), ("num", "bool"), (2, True),
              ["trace_left", "trace_right"]),
         ]
         cases.extend((s.D0Eop2(op, tagged("trace_left", s.D0Eint(2)),
                               tagged("trace_right", s.D0Eint(3))), kind, expected,
                       ["trace_left", "trace_right"])
-                     for op, kind, expected in (("+", "nat", 5), ("<", "bool", True)))
+                     for op, kind, expected in (("+", "num", 5), ("<", "bool", True)))
         original_substitute = target_ast.substitute
         for expression, kind, expected, order in cases:
             with self.subTest(expression=expression):
