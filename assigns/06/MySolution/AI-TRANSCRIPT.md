@@ -41,4 +41,12 @@ Running the command `python -B -m MySolution.demo` runs all examples in `example
 Take a look at the testing and correctness argument section and verify that the test files include all required tests. If a test is not included, add it.
 
 ### Output Review and Testing:
-Provided `TEST_COVERAGE.md`, which maps all 7 required tests to the corresponding file and method. 
+Provided `TEST_COVERAGE.md`, which maps all 7 required tests to the corresponding file and method.
+
+## Prompt 6
+
+### Prompt:
+Create a slide deck presenting the source and target languages, architecture, Church encodings, call-by-value compilation, testing, results, and limitations. Include a slide where I can demonstrate the demo.py file with different execution and observation budgets.
+
+### Output Review and Testing:
+I reviewed and edited the slides to include what I wanted in the presentation.
