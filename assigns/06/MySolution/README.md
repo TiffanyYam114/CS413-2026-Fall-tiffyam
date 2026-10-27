@@ -1,4 +1,7 @@
-## Recording link
+## Slides and Recording Link
+
+Slides are in `Midterm_Slides.pdf`.
+Recording link:
 https://drive.google.com/file/d/1CFYz8WWIZd4iwg9nX-Td84Pnb3coyvqp/view?usp=sharing
 
 
