@@ -28,51 +28,6 @@ To run the demo, run the following command:
 python -B -m MySolution.demo
 ```
 
-## Presentation files
-
-- PDF slides: `MySolution/presentation/Project_Slides.pdf` (19 slides).
-- Editable PowerPoint: `MySolution/presentation/Project_Slides.pptx`.
-- Speaker script: `MySolution/presentation/Presenter_Script.md`, with slide
-  timings and live commands for a roughly 17 minute 45 second presentation.
-- Budget experiment results: `MySolution/presentation/Budget_Demo_Transcript.txt`.
-- Recording: not created. Record the presentation with readable slides,
-  audible narration, and your face visible; add the video file or accessible
-  recording link here before submission.
-
-Run a focused example with different budgets from `assigns/06/`:
-
-```powershell
-python -B -m MySolution.budget_demo
-python -B -m MySolution.budget_demo --execution-budget 100
-python -B -m MySolution.budget_demo --observation-budget 100
-python -B -m MySolution.budget_demo --execution-budget 353 --observation-budget 333
-python -B -m MySolution.budget_demo --example loop --execution-budget 20
-```
-
-To run all budget comparisons, optionally pausing between them:
-
-```powershell
-./MySolution/presentation/Budget_Demo_Commands.ps1 -PauseBetween
-```
-
-The focused budget demo reports exhaustion as an intended demonstration
-outcome and returns exit code 0. The full `MySolution.demo` still returns
-nonzero if an example fails its expected check. Current factorial(4) requires
-353 execution steps and 333 observation steps; exact counts depend on the
-implementation. Increasing a budget never changes the intended answer.
-
-Rebuild the slides and measured result tables with no extra Python packages:
-
-```powershell
-python -B -m MySolution.build_presentation
-```
-
-Run the full test suite including the three focused budget-demo tests:
-
-```powershell
-python -B -m unittest MySolution.test_target_ast MySolution.test_church_encodings MySolution.test_compiler MySolution.test_decoders MySolution.test_budget_demo
-```
-
 ## Module overview
 
 - `lambda1_vp.py`: Supplied source AST and visitor interfaces.
