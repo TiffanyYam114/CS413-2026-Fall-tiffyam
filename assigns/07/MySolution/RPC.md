@@ -1,8 +1,24 @@
 # LAMBDA3 RPC contract
 
-This document defines version 1.0 of the service before the dispatcher is
-implemented. A client sends a method name and inputs. The server calls the
+This document defines version 1.0 of the service. The contract was written
+before implementing the dispatcher. A client sends a method name and inputs. The server calls the
 provided LAMBDA3 tools and returns a result or an error.
+
+## Run the service
+
+Use Python 3.12 or later. From the assignment directory (`assigns/07`), run:
+
+```text
+python -m pip install -r MySolution/requirements.txt
+python -m MySolution.app
+```
+
+The Flask development server listens at `http://127.0.0.1:8000`. Stop it with
+Ctrl+C. It runs locally with debug mode disabled.
+
+The implementation is split into `app.py` (HTTP), `dispatcher.py` (JSON-RPC),
+`lambda_service.py` (LAMBDA3 operations and the interpretation worker), and
+`rpc_errors.py` (shared error objects).
 
 ## HTTP endpoint
 
@@ -372,10 +388,10 @@ Response:
 
 ## JSON Schema files
 
-- [request.schema.json](request.schema.json) describes a request or a
+- `request.schema.json` describes a request or a
   nonempty batch. It includes the known methods' parameter rules and a
   separate `$defs.envelope` for the first validation stage.
-- [response.schema.json](response.schema.json) describes a response or a
+- `response.schema.json` describes a response or a
   nonempty response array, including success results and error objects.
 
 Both use JSON Schema Draft 2020-12 and local references, so they do not need
