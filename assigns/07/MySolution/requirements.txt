@@ -1,0 +1,2 @@
+# Python 3.12 or later is required by LAMBDA3.
+Flask==3.1.3
