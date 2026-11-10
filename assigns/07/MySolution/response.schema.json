@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LAMBDA3 RPC response or batch",
+  "description": "JSON bodies returned with HTTP 200. HTTP 204 has no body and is not validated with this schema.",
+  "oneOf": [
+    { "$ref": "#/$defs/response" },
+    {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/response" }
+    }
+  ],
+  "$defs": {
+    "id": { "type": ["string", "number", "null"] },
+    "result": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "version"],
+          "properties": {
+            "status": { "const": "ok" },
+            "version": { "const": "1.0" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type"],
+          "properties": { "type": { "type": "string", "minLength": 1 } },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "type": "string", "minLength": 1 },
+            "value": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["target", "code"],
+          "properties": {
+            "target": { "enum": ["python", "javascript"] },
+            "code": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "errorData": {
+      "type": "object",
+      "required": ["category"],
+      "properties": {
+        "category": {
+          "enum": ["json_parse", "request", "method", "params", "internal", "syntax", "typecheck", "timeout"]
+        },
+        "detail": { "type": "string" },
+        "parameter": { "type": "string" },
+        "limit": { "type": "number", "exclusiveMinimum": 0 },
+        "unit": { "enum": ["bytes", "seconds"] },
+        "line": { "type": "integer", "minimum": 1 },
+        "column": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "integer", "enum": [-32700, -32600, -32601, -32602, -32603, -32010, -32011, -32012] },
+        "message": { "type": "string", "minLength": 1 },
+        "data": { "$ref": "#/$defs/errorData" }
+      },
+      "additionalProperties": false
+    },
+    "response": {
+      "type": "object",
+      "required": ["jsonrpc", "id"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "id": { "$ref": "#/$defs/id" },
+        "result": { "$ref": "#/$defs/result" },
+        "error": { "$ref": "#/$defs/error" }
+      },
+      "oneOf": [
+        { "required": ["result"], "not": { "required": ["error"] } },
+        { "required": ["error"], "not": { "required": ["result"] } }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LAMBDA3 RPC request or batch",
+  "description": "Accepted request shapes. The dispatcher validates in stages so envelope, method, and parameter errors receive different codes.",
+  "oneOf": [
+    { "$ref": "#/$defs/request" },
+    {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/request" }
+    }
+  ],
+  "$defs": {
+    "id": { "type": ["string", "number", "null"] },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 65536,
+      "pattern": "\\S",
+      "description": "Must contain a non-whitespace character. The server also checks the UTF-8 byte length is at most 65536; maxLength counts characters, not bytes."
+    },
+    "sourceParams": {
+      "type": "object",
+      "required": ["source"],
+      "properties": { "source": { "$ref": "#/$defs/source" } },
+      "additionalProperties": false
+    },
+    "compileParams": {
+      "type": "object",
+      "required": ["source", "target"],
+      "properties": {
+        "source": { "$ref": "#/$defs/source" },
+        "target": { "enum": ["python", "javascript"] }
+      },
+      "additionalProperties": false
+    },
+    "envelope": {
+      "type": "object",
+      "required": ["jsonrpc", "method"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "method": { "type": "string" },
+        "id": { "$ref": "#/$defs/id" }
+      },
+      "description": "Validate this first. Params are checked after the method is found. Extra envelope fields are ignored."
+    },
+    "request": {
+      "allOf": [
+        { "$ref": "#/$defs/envelope" },
+        {
+          "required": ["params"],
+          "properties": { "params": { "type": "object" } }
+        },
+        {
+          "if": { "properties": { "method": { "const": "service.health" } } },
+          "then": {
+            "properties": { "params": { "type": "object", "maxProperties": 0 } }
+          }
+        },
+        {
+          "if": { "properties": { "method": { "enum": ["lambda.typecheck", "lambda.interpret"] } } },
+          "then": { "properties": { "params": { "$ref": "#/$defs/sourceParams" } } }
+        },
+        {
+          "if": { "properties": { "method": { "const": "lambda.compile" } } },
+          "then": { "properties": { "params": { "$ref": "#/$defs/compileParams" } } }
+        }
+      ],
+      "description": "Method names remain strings so an unknown method is handled as Method not found, rather than Invalid Request."
+    }
+  }
+}
