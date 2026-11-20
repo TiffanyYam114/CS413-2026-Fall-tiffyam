@@ -15,3 +15,11 @@ Implement the RDC adapter.
 
 ### Output Review and Testing:
 Codex included `test_rpc.py`, which tests the RDC adapter. Tests include stream management, JSON-RPC, and HTTP requests. Running the file with `python -m unittest discover -s MySolution -p test_rpc.py -v` passes all tests.
+
+## Prompt 3
+
+### Prompt:
+Implement the browser client.
+
+### Output Review and Testing:
+I ran the browser and tested the animation. During the animation, some rows of the board became smaller. Clicking "start" would not start the animation; I had to click "next solution" to start it. The board size dropdown would not change the board size until I clicked "start." I asked Codex to fix these in the next prompt.
