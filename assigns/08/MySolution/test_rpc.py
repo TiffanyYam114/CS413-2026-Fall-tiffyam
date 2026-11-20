@@ -61,6 +61,21 @@ class StreamTests(unittest.TestCase):
         self.assertEqual(caught.exception.code, -32001)
         self.assert_unknown("unknown-id")
 
+    def test_all_limits_and_board_sizes_match_exact_requested_prefixes(self):
+        for size in range(4, 11):
+            with self.subTest(size=size):
+                expected = list(islice(self.solver.events(size), sum(range(1, 33))))
+                stream_id = self.open(size)
+                offset = 0
+                for limit in range(1, 33):
+                    result = self.manager.next(stream_id, limit)
+                    self.assertEqual(result["events"], expected[offset:offset + limit])
+                    self.assertLessEqual(len(result["events"]), limit)
+                    offset += len(result["events"])
+                    expected_done = offset == len(expected) and expected[-1]["event"] == "done"
+                    self.assertEqual(result["done"], expected_done)
+                self.manager.close(stream_id)
+
     def test_exhaustion_releases_closures_and_repeated_next_is_empty(self):
         stream_id = self.open()
         events = []
@@ -232,6 +247,20 @@ class RpcTests(unittest.TestCase):
             self.assertIsNone(self.rpc.handle({"jsonrpc": "2.0", "method": method,
                                                 "params": params}))
 
+    def test_open_notification_is_lazy_and_unused_stream_expires(self):
+        with patch.object(self.manager, "clock", return_value=0) as clock:
+            with patch("streams.force_cell", wraps=force_cell) as force:
+                reply = self.rpc.handle({"jsonrpc": "2.0", "method": "queens.open",
+                                         "params": {"size": 8}})
+                self.assertIsNone(reply)
+                self.assertEqual(len(self.manager._streams), 1)
+                state = next(iter(self.manager._streams.values()))
+                self.assertFalse(state.current.evaluated)
+                force.assert_not_called()
+            clock.return_value = 600
+            self.call("service.health")
+            self.assertEqual(self.manager._streams, {})
+
 
 class HttpTests(unittest.TestCase):
     @classmethod
@@ -347,6 +376,43 @@ class HttpTests(unittest.TestCase):
             self.assertEqual(self.call("queens.next", {"stream_id": stream_id, "limit": 32})
                              ["result"], {"events": [], "done": True})
         self.call("queens.close", {"stream_id": stream_id})
+
+    def test_http_notifications_advance_and_close_without_response_body(self):
+        stream_id = self.call("queens.open", {"size": 4})["result"]["stream_id"]
+        for method, params in (("queens.next", {"stream_id": stream_id, "limit": 1}),
+                               ("queens.close", {"stream_id": stream_id})):
+            status, _, body = self.request(json.dumps(
+                {"jsonrpc": "2.0", "method": method, "params": params}))
+            self.assertEqual((status, body), (204, b""))
+            if method == "queens.next":
+                result = self.call("queens.next", {"stream_id": stream_id, "limit": 1})
+                self.assertEqual(result["result"]["events"][0]["event"], "place")
+        reply = self.call("queens.next", {"stream_id": stream_id, "limit": 1}, "closed")
+        self.assertEqual(reply["error"]["code"], -32001)
+
+    def test_http_expiration_returns_application_error_with_original_id(self):
+        with patch.object(self.manager, "clock", return_value=0) as clock:
+            stream_id = self.call("queens.open", {"size": 4})["result"]["stream_id"]
+            clock.return_value = 600
+            reply = self.call("queens.next", {"stream_id": stream_id, "limit": 1}, "expired")
+        self.assertEqual(reply, {"jsonrpc": "2.0", "id": "expired", "error": {
+            "code": -32001, "message": "Unknown, closed, or expired stream ID"}})
+        self.assertNotIn(stream_id, self.manager._streams)
+
+    def test_http_internal_error_hides_details_and_invalidates_stream(self):
+        stream_id = self.call("queens.open", {"size": 4})["result"]["stream_id"]
+        with patch("streams.force_cell", side_effect=RuntimeError("private/path: closure, traceback")):
+            reply = self.call("queens.next", {"stream_id": stream_id, "limit": 1}, "failure")
+        self.assertEqual(reply, {"jsonrpc": "2.0", "id": "failure",
+                                 "error": {"code": -32603, "message": "Internal error"}})
+        self.assertNotIn(stream_id, self.manager._streams)
+
+    def test_http_ids_include_null_and_invalid_notifications_receive_errors(self):
+        for request_id in (None, 0, 4.5, "health-id"):
+            self.assertIn("result", self.call("service.health", {}, request_id))
+        status, _, body = self.request(b'{"jsonrpc":"2.0","method":42}')
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body)["error"]["code"], -32600)
 
 
 if __name__ == "__main__":

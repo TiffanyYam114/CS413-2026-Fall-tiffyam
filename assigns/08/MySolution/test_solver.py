@@ -40,8 +40,8 @@ class SolverTests(unittest.TestCase):
         return L.d0exp_evaluate(expr)
 
     def test_cps_safety_both_diagonals_column_and_safe(self):
-        # A same-row placement cannot arise: every candidate is in a new row.
-        # The corresponding list collision is a repeated column.
+        # Normal search candidates occupy a new row. Repeated columns and
+        # both diagonal directions are conflicts with earlier rows.
         for column, previous, safe in [(2, 2, False), (2, 1, False),
                                         (2, 3, False), (2, 0, True)]:
             with self.subTest(column=column, previous=previous):
@@ -59,11 +59,23 @@ class SolverTests(unittest.TestCase):
             "lam (u: unit) => empty_stream(), root_exhausted)")
         self.assertEqual(event_to_dict(force_cell(stream).head), {"event": "done"})
 
+    def test_cps_safety_same_row_with_different_columns(self):
+        # Distance 0 explicitly represents the same row. Columns 2 and 0
+        # differ, so this cannot pass merely by checking repeated columns.
+        stream = self.evaluate(
+            "check_safe(2, 0, list_cons(0, list_nil()), "
+            "lam (u: unit) => emit_lazy(make_event(1, 2, 0, list_nil()), "
+            "lam (v: unit) => empty_stream()), "
+            "lam (u: unit) => emit_lazy(make_event(2, 2, 0, list_nil()), "
+            "lam (v: unit) => empty_stream()))")
+        self.assertEqual(event_to_dict(force_cell(stream).head)["event"], "reject")
+
     def test_complete_small_traces_match_depth_first_specification(self):
         for size in (4, 5):
             with self.subTest(size=size):
                 actual = list(self.solver.events(size))
                 self.assertEqual(actual, list(reference_events(size)))
+                self.assertEqual(actual, list(self.solver.events(size)))
                 self.assertEqual({e["event"] for e in actual},
                                  {"try", "place", "reject", "backtrack", "solution", "done"})
 
@@ -123,6 +135,34 @@ class SolverTests(unittest.TestCase):
         self.assertEqual(done_count, 1)
         self.assertEqual(len(kinds), 6)
 
+    def test_cps_failure_resumes_next_candidate_after_solution(self):
+        # Rows 0..2 contain [1, 3, 0]. Only column 2 completes this board.
+        stream = self.evaluate(
+            "search(4, 3, list_cons(0, list_cons(3, list_cons(1, list_nil()))), "
+            "on_solution, root_exhausted)")
+        actual = []
+        while True:
+            cell = force_cell(stream)
+            if not cell.is_cons:
+                break
+            actual.append(event_to_dict(cell.head))
+            stream = cell.tail
+        expected = []
+        partial = [1, 3, 0]
+        for column in (0, 1):
+            for kind in ("try", "reject"):
+                expected.append({"event": kind, "column": column, "row": 3, "board": partial})
+        expected.extend([
+            {"event": "try", "column": 2, "row": 3, "board": partial},
+            {"event": "place", "column": 2, "row": 3, "board": partial + [2]},
+            {"event": "solution", "board": partial + [2]},
+            {"event": "backtrack", "column": 2, "row": 3, "board": partial},
+            {"event": "try", "column": 3, "row": 3, "board": partial},
+            {"event": "reject", "column": 3, "row": 3, "board": partial},
+            {"event": "done"},
+        ])
+        self.assertEqual(actual, expected)
+
     def test_open_and_bounded_prefix_do_not_run_later_search(self):
         original_lookup = L.d0env_search
         for size in range(4, 11):
@@ -177,6 +217,25 @@ class SolverTests(unittest.TestCase):
                 self.assertFalse(force_cell(cell.tail).is_cons)
             stream = cell.tail
         self.assertEqual(count, 1)
+
+    def test_bounded_prefix_leaves_delayed_failure_unexecuted(self):
+        stream = self.evaluate("""
+            let prefix : sint -> Strm[(sint, sint, sint, List[sint])] =
+              fix prefix(n) =>
+                if n == 0 then lazy_make(lam (u: unit) =>
+                  stcn_cons(make_event(0, 1 / 0, 0, list_nil()), empty_stream()))
+                else emit_lazy(make_event(0, 0, 0, list_nil()),
+                               lam (u: unit) => prefix(n - 1))
+            in prefix(32) end
+        """)
+        for _ in range(32):
+            cell = force_cell(stream)
+            self.assertEqual(event_to_dict(cell.head),
+                             {"event": "try", "column": 0, "row": 0, "board": []})
+            stream = cell.tail
+        self.assertFalse(stream.evaluated)
+        with self.assertRaises(ZeroDivisionError):
+            force_cell(stream)
 
     def test_iterator_stops_at_requested_prefix(self):
         prefix = list(islice(self.solver.events(10), 1))

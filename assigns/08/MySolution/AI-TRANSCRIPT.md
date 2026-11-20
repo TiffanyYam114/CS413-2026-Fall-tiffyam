@@ -38,4 +38,12 @@ I reviewded the new browser. All requested features were added. However, the scr
 The website should stay the same size in width when the animation is played. Also make the try, place, reject, backtrack, and solution events more distinct with colors.
 
 ### Output Review and Testing:
-The browser now stayed the same size, and the events were distinguishable with colors. 
+The browser now stayed the same size, and the events were distinguishable with colors.
+
+## Prompt 6
+
+### Prompt:
+Write tests. Make sure all required tests are included.
+
+### Output Review and Testing:
+I reviewed `test_client.py`, `test_rpc.py`, `test_solver.py`to see if all required tests were included.
