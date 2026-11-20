@@ -1,0 +1,89 @@
+# Fixed N-Queens solver. All search and safety decisions are made here.
+# Board: List[sint], newest row first internally.
+# Event: (kind, column, row, board), with board in row order.
+# Kinds: 0 try, 1 place, 2 reject, 3 backtrack, 4 solution, 5 done.
+# Coordinates for solution and done are -1 (omitted by the JSON adapter).
+# References: LAMBDA3/mytest/eight_queens*.lam for collision rules and
+# lazy_make/stcn_cons usage. The row-by-row CPS event search is new.
+
+board_reverse : (List[sint], List[sint]) -> List[sint] =
+  fix reverse(p) =>
+    if list_nilq(p.0) then p.1
+    else reverse(list_tail(p.0), list_cons(list_head(p.0), p.1))
+
+board_extend : (sint, List[sint]) -> List[sint] =
+  lam (p) => list_cons(p.0, p.1)
+
+queen_conflicts : (sint, sint, sint) -> bool = lam (p) =>
+  if p.0 == p.2 then true
+  else if p.0 - p.1 == p.2 then true
+  else p.0 + p.1 == p.2
+
+make_event : (sint, sint, sint, List[sint]) -> (sint, sint, sint, List[sint]) =
+  lam (p) => (p.0, p.1, p.2, board_reverse(p.3, list_nil()))
+
+# Resume = unit -> Strm[Event]. The thunk is called only when the tail
+# is forced, not when the current cell is constructed or forced.
+emit_lazy[T] : (T, unit -> Strm[T]) -> Strm[T] = lam (p) =>
+  lazy_make(lam (u: unit) =>
+    stcn_cons(p.0, lazy_make(lam (v: unit) => lazy_eval(p.1()))))
+
+empty_stream[T] : unit -> Strm[T] = lam (u: unit) =>
+  lazy_make(lam (v: unit) => stcn_nil())
+
+# Safety is CPS: neither the recursive walk nor its caller returns/tests
+# a safety Boolean. It hands control to exactly one of the two callbacks.
+check_safe : (sint, sint, List[sint],
+              unit -> Strm[(sint, sint, sint, List[sint])],
+              unit -> Strm[(sint, sint, sint, List[sint])])
+             -> Strm[(sint, sint, sint, List[sint])] =
+  fix safe(p) =>
+    if list_nilq(p.2) then p.3()
+    else if queen_conflicts(p.0, p.1, list_head(p.2)) then p.4()
+    else safe(p.0, p.1 + 1, list_tail(p.2), p.3, p.4)
+
+# Success receives (complete board, resume remaining search).
+on_solution : (List[sint], unit -> Strm[(sint, sint, sint, List[sint])])
+              -> Strm[(sint, sint, sint, List[sint])] =
+  lam (p) => emit_lazy(make_event(4, -1, -1, p.0), p.1)
+
+root_exhausted : unit -> Strm[(sint, sint, sint, List[sint])] =
+  lam (u: unit) => emit_lazy(make_event(5, -1, -1, list_nil()),
+                            lam (v: unit) => empty_stream())
+
+# State: (size, next row, board, success continuation, failure continuation).
+# try_column is nested so it can call search without mutual declarations.
+search : (sint, sint, List[sint],
+          (List[sint], unit -> Strm[(sint, sint, sint, List[sint])])
+            -> Strm[(sint, sint, sint, List[sint])],
+          unit -> Strm[(sint, sint, sint, List[sint])])
+         -> Strm[(sint, sint, sint, List[sint])] =
+  fix search(state) =>
+    if state.1 == state.0 then state.3(state.2, state.4)
+    else
+      let
+        try_column : sint -> Strm[(sint, sint, sint, List[sint])] =
+          fix try_column(column) =>
+            if column == state.0 then state.4()
+            else emit_lazy(make_event(0, column, state.1, state.2),
+              lam (u: unit) =>
+                check_safe(column, 1, state.2,
+                  lam (v: unit) =>
+                    let next_board = board_extend(column, state.2)
+                    in emit_lazy(make_event(1, column, state.1, next_board),
+                      lam (w: unit) =>
+                        search(state.0, state.1 + 1, next_board, state.3,
+                          lam (x: unit) =>
+                            emit_lazy(make_event(3, column, state.1, state.2),
+                              lam (y: unit) => try_column(column + 1))))
+                    end,
+                  lam (v: unit) =>
+                    emit_lazy(make_event(2, column, state.1, state.2),
+                      lam (w: unit) => try_column(column + 1))))
+      in try_column(0) end
+
+# Only this fixed entry point is needed by the Python adapter.
+# Even the initial call to search is delayed until the first force.
+queens_open : sint -> Strm[(sint, sint, sint, List[sint])] = lam (size) =>
+  lazy_make(lam (u: unit) =>
+    lazy_eval(search(size, 0, list_nil(), on_solution, root_exhausted)))
