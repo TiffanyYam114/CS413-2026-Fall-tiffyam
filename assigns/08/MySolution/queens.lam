@@ -15,7 +15,10 @@ board_extend : (sint, List[sint]) -> List[sint] =
   lam (p) => list_cons(p.0, p.1)
 
 queen_conflicts : (sint, sint, sint) -> bool = lam (p) =>
-  if p.0 == p.2 then true
+  # A zero row distance means the queens share a row, even in different columns.
+  # Normal search always starts at distance 1 because it visits a fresh row.
+  if p.1 == 0 then true
+  else if p.0 == p.2 then true
   else if p.0 - p.1 == p.2 then true
   else p.0 + p.1 == p.2
 
