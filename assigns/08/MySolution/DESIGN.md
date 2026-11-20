@@ -330,5 +330,3 @@ Tests will exercise the actual LAMBDA3 implementation, check all 92 distinct
 8 by 8 solutions in deterministic order, verify event snapshots and laziness,
 and cover RPC errors, limits, expiration, closing, and repeated reads after
 completion. An HTTP test will consume all 92 solutions through the service.
-Browser controls and visible errors will have automation or a documented
-manual checklist. These are planned checks, not results already obtained.
