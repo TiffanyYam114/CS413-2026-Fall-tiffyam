@@ -23,3 +23,19 @@ Implement the browser client.
 
 ### Output Review and Testing:
 I ran the browser and tested the animation. During the animation, some rows of the board became smaller. Clicking "start" would not start the animation; I had to click "next solution" to start it. The board size dropdown would not change the board size until I clicked "start." I asked Codex to fix these in the next prompt.
+
+## Prompt 4
+
+### Prompt:
+The squares on the chessboard should not change size during the animation. Changing the board size in the dropdown should change the board automatically. Clicking start should start the first solution.
+
+### Output Review and Testing:
+I reviewded the new browser. All requested features were added. However, the screen size would randomly change during the animation, and it was difficult to distinguist try, place, reject, backtrack, and solution events. I asked Codex to fix these in the next prompt.
+
+## Prompt 5:
+
+### Prompt:
+The website should stay the same size in width when the animation is played. Also make the try, place, reject, backtrack, and solution events more distinct with colors.
+
+### Output Review and Testing:
+The browser now stayed the same size, and the events were distinguishable with colors. 

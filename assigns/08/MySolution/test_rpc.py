@@ -269,6 +269,23 @@ class HttpTests(unittest.TestCase):
         self.assertEqual(self.call("service.health", {})["result"],
                          {"status": "ok", "version": "1.0"})
 
+    def test_browser_assets_are_local_and_only_allowed_files_are_served(self):
+        for path, media_type in (("/", "text/html"), ("/index.html", "text/html"),
+                                 ("/styles.css", "text/css"), ("/app.mjs", "text/javascript"),
+                                 ("/controller.mjs", "text/javascript"),
+                                 ("/rpc-client.mjs", "text/javascript"),
+                                 ("/view.mjs", "text/javascript")):
+            with self.subTest(path=path):
+                status, content_type, body = self.request(None, path=path, method="GET")
+                self.assertEqual(status, 200)
+                self.assertIn(media_type, content_type)
+                self.assertTrue(body)
+                if path == "/":
+                    self.assertIn(b'id="next-solution"', body)
+                    self.assertIn(b'src="/app.mjs"', body)
+        for path in ("/../server.py", "/%2e%2e/server.py", "/queens.lam", "/README.md", "/web/"):
+            self.assertEqual(self.request(None, path=path, method="GET")[0], 404)
+
     def test_http_errors_notifications_and_transport_rules(self):
         for body, code in ((b"{", -32700), (b"[]", -32600),
                            (b'{"jsonrpc":"2.0","id":1,"method":"unknown"}', -32601),
